@@ -7,6 +7,12 @@ A lightweight desktop companion prototype. Keep a character beside your work, cl
 
 > Source prototype for macOS Apple Silicon. Full dance quality, long-running stability and public installers remain under evaluation. The cover is a brand illustration, not an app screenshot. Bring your own licensed VRM avatar.
 
+## Live demo · 30 seconds
+
+https://github.com/user-attachments/assets/217548af-7558-4319-9b74-b3ae99c29fe9
+
+“Boom Boom Pow” — Black Eyed Peas. A live recording of the companion window from the start of the song, with captured playback audio at original speed. The demo uses a user-imported Jessair Cute Model; see [character and music notices](THIRD-PARTY-NOTICES.md).
+
 ## Features
 
 - **Desktop presence:** a draggable, transparent, always-on-top VRM character with a compact conversation bubble and an on-demand management window.
