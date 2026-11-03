@@ -5,6 +5,7 @@
 | ID | 优先级 | 任务 | 状态 | 交付物与验收 |
 | --- | --- | --- | --- | --- |
 | PM-01 | P0 | 整理独立本地项目 | 完成 | 新路径187项测试通过、生产构建通过；源码、Git、任务看板与里程碑齐备 |
+| MAINT-01 | P2 | 首轮依赖 PR 整理 | 进行中 | Actions 更新逐项验证；Electron/Vite/图标/Three.js 拆分；Pixi 保持兼容组合，见[维护记录](../implementation/dependency-maintenance.md) |
 | DANCE-01 | P0 | 完整连续舞段视觉基准 | 完成 | 人工确认：同一 VRM 完整播放 63 秒源舞段观感合格；失效归属=编排层（3 个两拍片段切片破坏连续表达），绑定/重定向非主瓶颈；全段三条件数值证据见[stage-28](../implementation/stage-28-dance-visual-baseline.md)；对照为研究窗口实时同钟（未录制视频） |
 | BODY-01 | P1 | 根轨迹实验收尾 | 待验收 | Stage26候选已实现、187测试通过；父缩放修复后的新构建原生回放尚待补；当前实验不能当日常默认 |
 | DANCE-02 | P1 | 完整舞句与结构标注 | 完成 | Stage30：63 秒源舞段标注交付——准备 0–11.0s / 主体 11.0–61.3s / 恢复 61.4–63.3s，69 重音锚点（67 落脚）、137 接触区间、33 朝向转折、17 候选舞句边界；全部 kinematic-estimate 且保留完整材料；194 测试通过；见[stage-30](../implementation/stage-30-dance-structure.md) |
