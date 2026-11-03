@@ -15,6 +15,7 @@ const { BehaviorDirector } = require('./behavior.cjs');
 const behavior = new BehaviorDirector();
 const { MusicAudio } = require('./music-audio.cjs');
 const { DanceStream } = require('./dance-stream.cjs');
+const { loadDanceLibrary } = require('./dance-library.cjs');
 const { DEFAULT_BASE_URL, DEFAULT_MODEL, validateLlmConfig } = require('./llm.cjs');
 const exec = promisify(execFile);
 app.setName('Komorebi');
@@ -175,8 +176,7 @@ function musicChanged(state) {
   if(state.status==='playing'&&lastMusicStatus!=='playing'&&musicAudio?.state.mode==='off'&&store.setting('musicEnabled',true))musicAudio.start('netease').catch(()=>{});
   // Stop capturing when playback stops so we never keep the tap open silently.
   if(state.status!=='playing'&&musicAudio?.state.mode==='netease')musicAudio.stop();
-  // Streaming dance: generate motion from the live audio while playback runs.
-  if(state.status==='playing'&&danceStream&&danceStream.status.state==='off'){setTimeout(()=>{if(store.setting('musicEnabled',true))danceStream.start().catch(()=>{})},9000)}
+  // Daily playback uses the motion library. Research generation starts only explicitly.
   if(state.status!=='playing'&&danceStream?.running)danceStream.stop();
   lastMusicStatus=state.status;
   const height=state.title||musicAudio?.state.mode==='demo'?500:440;
@@ -374,20 +374,7 @@ function registerIPC() {
     musicAudioStart: mode => musicAudio.start(mode),
     musicAudioStop: () => musicAudio.stop(),
     musicAudioReady: () => musicAudio.readyDemo(),
-    danceLibrary: () => {
-      const dir = path.join(app.getPath('userData'), 'dance-library');
-      const manifestPath = path.join(dir, 'manifest.json');
-      if (!fs.existsSync(manifestPath)) return {available: false, clips: [], frames: []};
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-      const frames = [];
-      for (const clip of manifest.clips || []) {
-        const file = path.join(dir, `${clip.name}.json`);
-        if (!fs.existsSync(file)) continue;
-        const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-        for (const frame of data.frames || []) frames.push({rotations: frame.r, hips: frame.h, feet: frame.ft});
-      }
-      return {available: frames.length > 0, clips: manifest.clips || [], frames};
-    },
+    danceLibrary: () => loadDanceLibrary(path.join(app.getPath('userData'), 'dance-library')),
     danceStreamStart: () => danceStream.start(),
     danceStreamStop: () => danceStream.stop(),
     danceStreamSnapshot: () => danceStream.snapshot(),
@@ -539,7 +526,7 @@ app.whenReady().then(() => {
   music.on('change',musicChanged);
   musicAudio=new MusicAudio({nativeRoot:path.join(root,'native/audio-tap')});
   danceStream=new DanceStream({venvPython:path.join(os.homedir(),'.komorebi-motion-venv/bin/python'),serverScript:path.join(root,'scripts/bailando-stream-server.py'),audio:musicAudio});
-  danceStream.on('segment',segment=>{if(pet&&!pet.isDestroyed())pet.webContents.send('komorebi:dance-stream',segment);send('dance-stream',segment)});
+  danceStream.on('segment',segment=>send('dance-stream',segment));
   danceStream.on('status',status=>send('dance-stream-status',status));
   musicAudio.on('change',state=>{const height=music?.state.title||state.mode==='demo'?500:440;if(height!==petHeight){petHeight=height;positionPet();}send('music-signal',state);});
   musicAudio.on('audio',data=>{if(pet&&!pet.isDestroyed())pet.webContents.send('komorebi:music-audio',data);});
@@ -575,7 +562,7 @@ app.whenReady().then(() => {
   });
   if(process.argv.includes('--motion-lab'))showMotionLab();
 }).catch(error => { dialog.showErrorBox('木漏日未能启动',error.message); app.quit(); });
-app.on('before-quit',() => { quitting=true; endPetDrag(); music?.stop(); musicAudio?.stop(); runner?.shutdown(); stopSpeech(); });
+app.on('before-quit',() => { quitting=true; endPetDrag(); music?.stop(); musicAudio?.stop(); danceStream?.stop(); runner?.shutdown(); stopSpeech(); });
 app.on('will-quit',() => { globalShortcut.unregisterAll();store?.close(); });
 app.on('window-all-closed',() => {});
 

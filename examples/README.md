@@ -32,3 +32,7 @@
 | [完整舞句与结构标注](stage-30-dance-structure/README.md) | `node examples/stage-30-dance-structure/user_code/main.mjs /absolute/local/dance.bvh` | 准备/主体/恢复分段、动作重音锚点、朝向转折、接触区间与候选舞句边界（全部运动学估计） | [stage-30](../docs/implementation/stage-30-dance-structure.md) |
 | [音乐驱动舞句规划](stage-31-dance-planner/README.md) | `node examples/stage-31-dance-planner/user_code/main.mjs /absolute/local/dance.bvh 120 30` | 同素材×三种音乐的可解释舞句计划（选句/伸缩/对齐误差） | [stage-31](../docs/implementation/stage-31-dance-planner.md) |
 | [音乐信号基准](stage-33-music-baseline/README.md) | `node examples/stage-33-music-baseline/user_code/main.mjs` | 合成鼓点已知真值评分：BPM/起音/半倍速/静音恢复/端到端规划 | [stage-33](../docs/implementation/stage-33-music-baseline.md) |
+
+## 日常播放连续性回归
+
+[连续窗口与手部碎抖](motion-continuity/README.md)：`node examples/motion-continuity/user_code/main.mjs`。纯合成姿态，不需要本机角色或动作素材；验证身体参与、能量抖动隔离和停止淡出。实现见 [播放连续性修复](../docs/implementation/motion-playback-continuity.md)。

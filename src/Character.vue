@@ -20,12 +20,12 @@ import {createContinuousGroove} from './motion/continuous-groove.mjs'
 import {createReliabilityMonitor,createReliabilityGate} from './motion/music-reliability.mjs'
 const props=defineProps({active:Boolean,pet:Boolean,behavior:Object,music:Object,audio:Object,danceEnabled:{type:Boolean,default:true},tempo:{type:Number,default:100},fullReplay:{type:Boolean,default:false},reliabilityGate:{type:Boolean,default:false}})
 const emit=defineEmits(['touch','ready','dance-frame']);const host=ref(null),loading=ref(true),error=ref('');
-let reliabilityMonitor,reliabilityGate,reliability={mode:'reactive',reason:'disabled'},lastOnsetFrameRef=null,plannedMaterial,plannedStructure,referenceText,danceStreamQueue=[],danceStreamPlayhead=0,danceStreamWeight=0,danceStreamSilentFor=0,removeDanceStream,danceRetarget=null,grooveEngine,grooveClock=0,grooveBpm=120,danceLibraryFrames=null,diagnosingLimiter=false,lastDanceReport=0,localExecutor,localExecutionReport,localDance,localPose,idle,lastIdleReport=0,footPlant,footError=0,renderer,scene,camera,vrm,observer,raf,last=0,elapsed=0,disposed=false,removeSpeech,removeMusicAudio,musicAudio,audio,audioContext,analyser,audioSource,samples,hipsRest,viewHeight=2.2,lastRender=0,lastReport=0,frames=0;
+let reliabilityMonitor,reliabilityGate,reliability={mode:'reactive',reason:'disabled'},lastOnsetFrameRef=null,plannedMaterial,plannedStructure,referenceText,danceStreamQueue=[],danceStreamPlayhead=0,danceStreamWeight=0,danceStreamSilentFor=0,danceStreamTransition=1,danceStreamPrevPose=null,removeDanceStreamStatus,removeDanceStream,danceRetarget=null,grooveEngine,grooveClock=0,grooveBpm=120,danceLibraryFrames=null,diagnosingLimiter=false,lastDanceReport=0,localExecutor,localExecutionReport,localDance,localPose,idle,lastIdleReport=0,footPlant,footError=0,renderer,scene,camera,vrm,observer,raf,last=0,elapsed=0,disposed=false,removeSpeech,removeMusicAudio,musicAudio,audio,audioContext,analyser,audioSource,samples,hipsRest,viewHeight=2.2,lastRender=0,lastReport=0,frames=0;
 const dance=new VRMDanceController(),reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 reliabilityMonitor=createReliabilityMonitor();reliabilityGate=createReliabilityGate();
 function fit(){if(!renderer)return;const {width,height}=host.value.getBoundingClientRect();if(width<1||height<1)return;renderer.setSize(width,height);const vertical=Math.max(viewHeight,viewHeight*.72/(width/height));camera.left=-vertical*width/height/2;camera.right=-camera.left;camera.top=vertical/2;camera.bottom=-vertical/2;camera.updateProjectionMatrix()}
 async function speech(data){audio?.pause();audioSource?.disconnect();if(data.stop||!data.audio)return;try{audioContext||=new AudioContext();await audioContext.resume();analyser=audioContext.createAnalyser();analyser.fftSize=256;samples=new Uint8Array(analyser.fftSize);audio=new Audio(data.audio);audioSource=audioContext.createMediaElementSource(audio);audioSource.connect(analyser);analyser.connect(audioContext.destination);await audio.play()}catch(e){console.error('VRM speech playback',e)}}
-function tick(now){if(disposed)return;raf=requestAnimationFrame(tick);if(diagnosingLimiter)return;const fps=document.hidden?4:30;if(now-lastRender<1000/fps)return;lastRender=now;const dt=last?Math.min((now-last)/1000,.1):1/30;last=now;elapsed+=dt;if(!vrm)return;
+function tick(now){if(disposed)return;raf=requestAnimationFrame(tick);if(diagnosingLimiter)return;if(document.hidden&&now-lastRender<250)return;lastRender=now;const dt=last?Math.min((now-last)/1000,.1):1/30;last=now;elapsed+=dt;if(!vrm)return;
  const audioMode=['demo','netease','system'].includes(props.audio?.mode),enabled=props.danceEnabled&&!reduced.matches;
  if(props.reliabilityGate){const signal=props.audio?.signal;if(signal)reliabilityMonitor.push({time:elapsed,state:signal.state,confidence:signal.tempo?.confidence??null,bpm:signal.tempo?.bpm??null});const judgement=reliabilityMonitor.judge();const mode=reliabilityGate.push(judgement,elapsed);reliability={mode,reason:judgement.reason,trackingRatio:judgement.trackingRatio,confidenceMedian:judgement.confidenceMedian}}
  let pose=dance.step({dt,audioMode,signal:props.audio?.signal,signalAge:props.audio?.receivedAt===undefined?Infinity:(performance.now()-props.audio.receivedAt)/1000,enabled,style:props.behavior?.choice||'default',preview:['gentle','energetic'].includes(props.behavior?.choice)||props.music?.preview,tempo:props.tempo});
@@ -33,9 +33,10 @@ function tick(now){if(disposed)return;raf=requestAnimationFrame(tick);if(diagnos
  const onsetFrame=props.audio?.signal?.lastOnsetFrame,newOnset=onsetFrame!==undefined&&onsetFrame!==lastOnsetFrameRef;
  if(newOnset)lastOnsetFrameRef=onsetFrame;
  const grooveActive=false;
- if(!grooveActive&&localDance)localPose=localDance.step({dt,active:props.fullReplay||(plannedActive&&enabled&&['audio','preview'].includes(pose.source.mode)&&pose.source.primitive!=='rest'),beat:pose.source.beat,clockEpoch:pose.source.clockEpoch,timing:pose.source.timing,bpm:pose.source.bpm,energy:props.audio?.signal?.energy??.5,onset:newOnset,accent:pose.source.accent??0});
+ const danceStreamActive=enabled&&stepDanceStream(dt);
+ if(!danceStreamActive&&!grooveActive&&localDance)localPose=localDance.step({dt,active:props.fullReplay||(plannedActive&&enabled&&['audio','preview'].includes(pose.source.mode)&&pose.source.primitive!=='rest'),beat:pose.source.beat,clockEpoch:pose.source.clockEpoch,timing:pose.source.timing,bpm:pose.source.bpm,energy:props.audio?.signal?.energy??.5,onset:newOnset,accent:pose.source.accent??0});
+ if(danceStreamActive)localPose=null;
  if(idle)pose=idle.step({dt,pose,reducedMotion:reduced.matches});
- const danceStreamActive=stepDanceStream(dt);
  if(!danceStreamActive&&!grooveActive){vrm.humanoid.resetNormalizedPose();for(const [name,angles] of Object.entries(pose.rotations)){const node=vrm.humanoid.getNormalizedBoneNode(name);if(node){const [x,y,z]=angles;const sign=vrm.meta.metaVersion==='0'?-1:1;node.quaternion.setFromEuler(new THREE.Euler(x*sign,y,z*sign,'XYZ'))}}
  const hips=vrm.humanoid.getNormalizedBoneNode('hips');const shift=new THREE.Vector3(pose.hips[0]*(footPlant?.lateralSign||1),pose.hips[1],pose.hips[2]).applyQuaternion(hips.parent.getWorldQuaternion(new THREE.Quaternion()).invert());hips.position.copy(hipsRest).add(shift);}
  // Breathing and blinking are idle gestures, independent of audio choreography.
@@ -55,6 +56,7 @@ function tick(now){if(disposed)return;raf=requestAnimationFrame(tick);if(diagnos
   const knee=vrm.humanoid.getNormalizedBoneNode(side+'LowerLeg');
   if(knee){const kneeAngle=knee.quaternion.angleTo(identityQ);if(kneeAngle>2.6)knee.quaternion.slerp(identityQ,1-2.6/kneeAngle)}
  }
+ if(host.value)host.value.dataset.motionSource=danceStreamActive?'stream':localPose?.weight>0?'library':'idle';
  vrm.scene.updateMatrixWorld(true);footError=localPose?.weight>0?0:footPlant?.apply(pose.feet)||0;if(localPose){localExecutionReport=localExecutor.apply(localPose,hipsRest);footError=localExecutionReport.desiredError??footError;host.value.dataset.danceClip=String(localPose.clip);host.value.dataset.danceWeight=localPose.weight.toFixed(3);
  Object.assign(host.value.dataset,{danceExecution:localExecutionReport.mode,danceWorldAlignment:localDance.bank.worldAlignment||'unknown',danceBeat:Number(localPose.beat||0).toFixed(3),danceSupport:localPose.support||'unknown',danceTiming:localPose.timing||'estimated',dancePhaseError:Number(localPose.phaseError||0).toFixed(4),danceSourceFrame:Number(localPose.sourceFrame||0).toFixed(2)});
  if(now-lastDanceReport>500){lastDanceReport=now;const report={available:Boolean(localDance.bank.beatAligned),weight:localPose.weight,clip:localPose.clip,beat:localPose.beat,clipBeat:localPose.clipBeat,sourceFrame:localPose.sourceFrame,support:localPose.support,timing:localPose.timing,phaseError:localPose.phaseError,clockEpoch:localPose.clockEpoch,switches:localPose.switches,blockedTransitions:localPose.blockedTransitions,contactError:null,contactLocked:0,contactSkipped:0,contactRejected:0,footHeights:localExecutionReport.ankleHeightsRelativeRest,lastLanding:localExecutionReport.lastLanding,contactMethod:'source-kinematic-estimate-no-lock',musicBpm:pose.source.bpm,motionSource:pose.source.mode,sourcePrimitive:pose.source.primitive,signalStream:props.audio?.signal?.streamId,signalSampleFrame:props.audio?.signal?.sampleFrame,execution:{...localExecutionReport,worldAlignment:localDance.bank.worldAlignment,rootPolicy:localDance.bank.rootPolicy,bankExecution:localDance.bank.execution,limiter:localPose.limiter,transitionPolicy:localPose.transitionPolicy,legacyContactApplied:false,finalWriter:localPose.weight>0?'source-trajectory-executor':'procedural-idle'},clips:localDance.bank.clips.map(({id,start,end,beats,anchors,activity})=>({id,start,end,beats,anchors,activity})),planned:localPose.plan??null,reliability:props.reliabilityGate?reliability:null};emit('dance-frame',report);if(props.pet)window.komorebi.danceStudyReport(report).catch(()=>{})}}vrm.update(dt);renderer.render(scene,camera);frames++;
@@ -67,23 +69,18 @@ onMounted(async()=>{try{console.info('[boot] mounted')
  console.info('[boot] requesting avatar');const resource=await window.komorebi.motionAvatar();console.info('[boot] avatar bytes',resource?.bytes?.byteLength);if(!resource)throw Error('请先在配置与管理中导入 VRM 角色。');if(disposed)return;
  const loader=new GLTFLoader();loader.register(parser=>new VRMLoaderPlugin(parser));const bytes=resource.bytes;console.info('[boot] parsing vrm');const gltf=await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');vrm=gltf.userData.vrm;if(disposed){VRMUtils.deepDispose(vrm.scene);return}console.info('[boot] vrm parsed');VRMUtils.rotateVRM0(vrm);scene.add(vrm.scene);vrm.scene.updateMatrixWorld(true);
  const bounds=new THREE.Box3().setFromObject(vrm.scene),height=bounds.max.y-bounds.min.y;viewHeight=height*1.35;camera.position.set(0,(bounds.max.y+bounds.min.y)/2,4);camera.lookAt(0,camera.position.y,0);hipsRest=vrm.humanoid.getNormalizedBoneNode('hips').position.clone();footPlant=createFootPlant(vrm);localExecutor=createLocalDanceExecutor(vrm);fit();observer=new ResizeObserver(fit);observer.observe(host.value);
- if(props.pet){removeDanceStream=window.komorebi.on('dance-stream',segment=>{try{setupDanceRetarget();applyDanceJoints(segment.joints,segment.frames)}catch(error){console.warn('dance stream segment failed',error.message)}});removeSpeech=window.komorebi.on('speech',speech);removeMusicAudio=window.komorebi.on('music-audio',data=>{musicAudio?.pause();musicAudio=null;if(data.type==='demo'){musicAudio=new Audio(data.audio);musicAudio.volume=.3;musicAudio.play().then(()=>window.komorebi.musicAudioReady()).catch(()=>window.komorebi.musicAudioStop())}})}
+ if(props.pet){removeDanceStreamStatus=window.komorebi.on('dance-stream-status',status=>{if(['off','error'].includes(status.state)){danceStreamQueue=[];danceStreamPlayhead=0;danceStreamWeight=0;danceStreamTransition=1;danceStreamPrevPose=null}});removeDanceStream=window.komorebi.on('dance-stream',segment=>{try{setupDanceRetarget();applyDanceJoints(segment.joints,segment.frames)}catch(error){console.warn('dance stream segment failed',error.message)}});removeSpeech=window.komorebi.on('speech',speech);removeMusicAudio=window.komorebi.on('music-audio',data=>{musicAudio?.pause();musicAudio=null;if(data.type==='demo'){musicAudio=new Audio(data.audio);musicAudio.volume=.3;musicAudio.play().then(()=>window.komorebi.musicAudioReady()).catch(()=>window.komorebi.musicAudioStop())}})}
  // Original idle is always available; locally installed Hiyori remains an optional study.
  let idleSource=defaultIdleMotion;
  try{const response=await fetch(new URL('./vendor/hiyori_free_zh/runtime/motion/hiyori_m05.motion3.json',location.href));if(response.ok){idleSource=await response.json();idleSource.Meta.Source='hiyori_m05'}}catch{}
  idle=new VRMIdleController(idleSource);if(disposed)return;
  // Optional local reference failure must not prevent the pet from starting.
- console.info('[boot] requesting reference');try{const reference=await window.komorebi.motionReference();console.info('[boot] reference',reference?.text?.length);if(reference?.text){referenceText=reference.text;
-  if(props.pet){
-   // Daily dancer: motion-matching freestyle over the compiled real-dance library.
-   grooveEngine=createContinuousGroove({seed:(Date.now()%100000)+1});
-  try{const library=await window.komorebi.danceLibrary();if(library?.available&&library.frames?.length>=600){danceLibraryFrames=library.frames;console.info('[dance] real-dance library',library.clips.length,'clips,',library.frames.length,'frames')}}catch(error){console.warn('[dance] library load failed',error.message)}
-  const compiled=await prepareLocalDance(vrm,referenceText,()=>disposed,{full:true});
-   const compiledFrames=compiled?.bank?.frames;
-   const playbackFrames=danceLibraryFrames?.length?danceLibraryFrames:compiledFrames;
-   if(playbackFrames?.length)localDance=createFreestyleMotionPlayer(playbackFrames,{fps:15,segmentSeconds:2.4,crossfadeSeconds:.6});
-   else localDance=compiled;
-  }else localDance=await prepareLocalDance(vrm,referenceText,()=>disposed)}}catch(e){console.warn('Local research dance unavailable',e.message)}
+ if(props.pet){
+  try{const library=await window.komorebi.danceLibrary();if(library?.available&&library.frames?.length){danceLibraryFrames=library.frames;localDance=createFreestyleMotionPlayer(library.frames,{fps:15,clips:library.clips,segmentSeconds:4.8,crossfadeSeconds:.6})}}catch(error){console.warn('[dance] library load failed',error.message)}
+ }
+ try{const reference=await window.komorebi.motionReference();if(reference?.text){referenceText=reference.text;
+  if(!localDance){const compiled=await prepareLocalDance(vrm,referenceText,()=>disposed,{full:props.pet});const frames=compiled?.bank?.frames;localDance=props.pet&&frames?.length?createFreestyleMotionPlayer(frames,{fps:15,segmentSeconds:4.8,crossfadeSeconds:.6}):compiled}
+ }}catch(e){console.warn('Local research dance unavailable',e.message)}
  tameSkirtSprings();
  console.info('[boot] ready');if(host.value){host.value.dataset.motionBank=localDance?String(localDance.bank?.clips?.length??0):'unavailable';host.value.dataset.danceLibrary=danceLibraryFrames?String(danceLibraryFrames.length):'none'}if(disposed)return;loading.value=false;emit('ready');raf=requestAnimationFrame(tick);
  }catch(e){loading.value=false;error.value=e.message;console.error('VRM',e)}})
@@ -147,14 +144,15 @@ function setupDanceRetarget(){
  for(const [bone,,child] of MAP){if(child==null)continue;restDir[bone]=restWorld[childBone[bone]].clone().sub(restWorld[bone]).normalize();restDirLocal[bone]=restDir[bone].clone().applyQuaternion(rootRot.clone().invert())}
  const restDirHead=restWorld.head.clone().sub(restWorld.neck).normalize();
  restDirLocal.head=restDirHead.clone().applyQuaternion(rootRot.clone().invert());
- danceRetarget={MAP,childBone,parentBone,order,node,rootRot,restDirLocal,hipsRest:node('hips').getWorldPosition(new THREE.Vector3()),worldQuat:{}};
+ danceRetarget={MAP,childBone,parentBone,order,node,rootRot,restDirLocal,hipsRest:node('hips').position.clone(),worldQuat:{}};
 }
 function applyDanceJoints(joints,frames){
  // joints: Float32Array frames*24*3, 60fps segments
  if(!danceRetarget||frames<1)return;
- const total=danceStreamQueue.reduce((sum,seg)=>sum+seg.frames,0);
+ if(frames<2||joints.length!==frames*72)return;
+ let total=danceStreamQueue.reduce((sum,seg)=>sum+seg.frames,0)+frames;
  danceStreamQueue.push({joints:new Float32Array(joints),frames,fps:60});
- while(total>900&&danceStreamQueue.length>2)danceStreamQueue.shift();
+ while(total>900&&danceStreamQueue.length>2){total-=danceStreamQueue.shift().frames;danceStreamPlayhead=0}
  danceStreamSilentFor=0;
 }
 function stepDanceStream(dt){
@@ -163,7 +161,7 @@ function stepDanceStream(dt){
  // advance playhead through queued segments (60fps source, ~30fps render)
  let budget=dt*60,segments=danceStreamQueue;
  danceStreamPlayhead+=budget;
- while(segments.length&&danceStreamPlayhead>=segments[0].frames){danceStreamPlayhead-=segments[0].frames;segments.shift()}
+ while(segments.length&&danceStreamPlayhead>=segments[0].frames){danceStreamPlayhead-=segments[0].frames;segments.shift();danceStreamTransition=0}
  danceStreamWeight=danceStreamQueue.length?Math.min(1,danceStreamWeight+dt/.3):Math.max(0,danceStreamWeight-dt/.5);
  if(!segments.length){danceStreamSilentFor+=dt;return danceStreamWeight>0.01}
  const seg=segments[0],position=Math.max(0,Math.min(seg.frames-1.001,danceStreamPlayhead)),i=Math.floor(position),j=Math.min(seg.frames-1,i+1),t=position-i;
@@ -172,6 +170,7 @@ function stepDanceStream(dt){
  const {MAP,parentBone,order,node,rootRot,restDirLocal,hipsRest,worldQuat}=danceRetarget;
  vrm.humanoid.resetNormalizedPose();
  const pelvis=point(0,i,t);
+ // Retargeted hip rest is local to the humanoid parent.
  node('hips').position.copy(hipsRest).add(new THREE.Vector3(pelvis.x,pelvis.y,pelvis.z));
  worldQuat.hips=rootRot.clone();
  for(const bone of order){
@@ -235,6 +234,6 @@ defineExpose({async configureRootTrajectory(options={}){
   localDance.setPlan(plan,{startTime:from});
   return {planSummary:plan.summary,from};
   },configureDanceExecution(options={}){if(!localDance||diagnosingLimiter)throw Error('本地动作尚未就绪或正在评估');localDance=createLocalDancePlayer(localDance.bank,options)},async assessLimiterStages(options={}){if(!vrm||!localDance||diagnosingLimiter)throw Error('本地动作尚未就绪或正在评估');diagnosingLimiter=true;try{return await assessDailyLimiterStages(vrm,localDance.bank,{...options,hipsRest:hipsRest.toArray()})}finally{diagnosingLimiter=false;last=performance.now();if(!disposed)renderer.render(scene,camera)}}})
-onBeforeUnmount(()=>{disposed=true;cancelAnimationFrame(raf);observer?.disconnect();removeDanceStream?.();removeSpeech?.();removeMusicAudio?.();musicAudio?.pause();audio?.pause();audioSource?.disconnect();audioContext?.close();if(scene)VRMUtils.deepDispose(scene);renderer?.dispose();renderer?.domElement.remove()})
+onBeforeUnmount(()=>{disposed=true;cancelAnimationFrame(raf);observer?.disconnect();removeDanceStream?.();removeDanceStreamStatus?.();removeSpeech?.();removeMusicAudio?.();musicAudio?.pause();audio?.pause();audioSource?.disconnect();audioContext?.close();if(scene)VRMUtils.deepDispose(scene);renderer?.dispose();renderer?.domElement.remove()})
 </script>
 <template><div ref="host" class="character" @click="!pet&&emit('touch')" role="img" aria-label="Jessair 蓝发少女 VRM 桌面伙伴"><span v-if="loading" class="character-loading">伙伴正在来这里…</span><span v-if="error" class="character-error">{{error}}</span></div></template>
