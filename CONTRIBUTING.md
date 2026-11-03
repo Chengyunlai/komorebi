@@ -35,8 +35,12 @@
 
 ## CI 与分发
 
-PR/push 执行测试、渲染器构建与 macOS 原生编译。依赖更新按月分组，需通过同样检查。手动 Package 工作流只产生内部试用包，不自动上传 Release；不要把无签名/未公证产物描述为正式发布。
+PR/push 执行测试、渲染器构建与 macOS 原生编译。依赖按月检查：补丁与小版本按开发/运行依赖分组，大版本单独提 PR；Electron 与 Three.js 始终单独升级。Electron 虽位于 devDependencies，仍须验证桌面启动、透明窗口和音频链路；Vite 大版本须补打包后运行验证。Live2D 0.4 所需 Pixi 6 与 unsafe-eval 6 保持配套，大版本迁移单独处理，不能用 `--force` 或 `--legacy-peer-deps` 绕过冲突。
+
+Actions 升级需验证实际受影响的工作流；普通 CI 通过不能代替手动 Package 的产物上传、下载与解压验证。手动 Package 工作流只产生内部试用包，不自动上传 Release；不要把无签名/未公证产物描述为正式发布。依赖维护记录见[实现记录](docs/implementation/dependency-maintenance.md)。
 
 ## English quick guide
 
 Read README → context → examples → the relevant implementation note. Run `npm ci` and `npm run verify`; stage intended files, then run `npm run check:release`. Keep PRs focused and include validation and limitations. Native music integration needs macOS, Xcode CLI tools and CMake. Use synthetic fixtures; never commit private data, keys, recordings, character assets, research motion or model weights. Preserve third-party notices. Document API/path changes. Visual dance acceptance is separate from passing tests. Contributions are licensed under MIT, subject to third-party terms.
+
+Group only minor/patch dependency updates; review major upgrades separately. Electron and Three.js always get separate PRs. Keep Pixi 6 and unsafe-eval 6 together until the Live2D integration is migrated; do not bypass peer conflicts. Electron/Vite upgrades need an application smoke check. Actions upgrades must exercise the affected workflow, including downloading and extracting packaging artifacts.
