@@ -77,4 +77,4 @@ CI 自动检查 Linux/Node 22、24 的测试与构建，以及 macOS 原生组�
 
 ## 许可
 
-自有源码采用 [MIT](LICENSE)。第三方代码、Live2D/Cubism、用户导入角色、动作、模型及歌曲保留各自许可；MIT 不授予这些资产的使用权。Live2D 研究资源不随开源快照提供，默认 VRM 待机包含原创后备动作。来源及使用边界见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+自有源码采用 [MIT](LICENSE)。可选研究脚本 `scripts/bailando-stream-server.py` 含上游采样流程，单独适用 [S-Lab 非商业许可](docs/licenses/Bailando-S-Lab-LICENSE.txt)，不属于 MIT 范围。第三方代码、Live2D/Cubism、用户导入角色、动作、模型及歌曲保留各自许可；MIT 不授予这些资产的使用权。Live2D 研究资源不随开源快照提供，默认 VRM 待机包含原创后备动作。来源及使用边界见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。

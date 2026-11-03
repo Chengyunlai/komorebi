@@ -76,4 +76,4 @@ Next priorities are continuous dance, reliable music response and everyday stabi
 
 ## License
 
-Original source is [MIT](LICENSE). Third-party code, Live2D/Cubism, imported characters, motions, models and songs retain their own terms. MIT does not grant rights to those assets. Optional Live2D study resources are excluded; an original VRM idle fallback is included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Original source is [MIT](LICENSE). The optional research adapter `scripts/bailando-stream-server.py` includes upstream sampling code and is separately covered by the [S-Lab non-commercial license](docs/licenses/Bailando-S-Lab-LICENSE.txt), outside the MIT scope. Third-party code, Live2D/Cubism, imported characters, motions, models and songs retain their own terms. MIT does not grant rights to those assets. Optional Live2D study resources are excluded; an original VRM idle fallback is included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

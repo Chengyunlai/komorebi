@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: LicenseRef-S-Lab-1.0
+# The optional sampler adapts the Bailando autoregressive sampling routine
+# (Copyright 2022 S-Lab), through ZeyuLing/Motius. Modifications: temperature
+# sampling and streaming integration, 2026 Komorebi contributors.
+# This research adapter is excluded from the root MIT license.
+# Non-commercial use only; see docs/licenses/Bailando-S-Lab-LICENSE.txt.
 """Streaming music-to-dance server for Komorebi.
 
 Reads JSON commands on stdin, writes JSON responses on stdout.
