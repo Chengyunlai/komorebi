@@ -1,3 +1,7 @@
+# 起音回应修复（2026-11-03）
+
+《Boom Boom Pow》节奏感退步反馈后，修复宿主批次合并丢失起音强度与弱脉冲一帧消失的问题，恢复短促身体重音。源码已构建，本机观感候选启动；真实歌曲踩拍仍待验收，见[记录](implementation/rhythm-onset-delivery.md)。
+
 # 当前日常播放（2026-11-03）
 
 日常动作库按实际源段范围独立采样，4.8s 连续窗口与移动过渡；音乐不再逐帧缩放骨骼角度；最新候选改用预录素材对称平滑，未知节奏默认原速，起音做短促身体响应，可信音乐与材料周期做有界相位修正。渲染前增加手/前臂/指端的裙摆代理体避让，见 [手裙与节奏修复](implementation/garment-clearance-rhythm.md)。可见窗口逐 rAF 更新；Bailando 改为显式研究入口，不与日常库同时写身体。动作库不再依赖旧 BVH 研究参考才能加载。见 [播放连续性修复](implementation/motion-playback-continuity.md) 和 [可运行回归](../examples/motion-continuity/README.md)。本机已载入修复候选，整段观感仍待用户确认。

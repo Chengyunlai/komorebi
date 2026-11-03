@@ -1,11 +1,12 @@
 import {parentPort,workerData} from 'node:worker_threads';
 import {MusicAnalyzer} from './vendor/music-signal/analyzer.mjs';
 import {demoBlock} from './vendor/music-signal/demo-audio.mjs';
-let analyzer,frame=0,sampleRate=48000,session=0,timer;
-function configure(rate){sampleRate=rate;frame=0;analyzer=new MusicAnalyzer({sampleRate,streamId:`${workerData.mode}-${workerData.session??0}-${++session}`});}
+import {createMusicSignalDelivery} from './music-signal-delivery.mjs';
+let analyzer,deliver,frame=0,sampleRate=48000,session=0,timer;
+function configure(rate){sampleRate=rate;frame=0;analyzer=new MusicAnalyzer({sampleRate,streamId:`${workerData.mode}-${workerData.session??0}-${++session}`});deliver=createMusicSignalDelivery();}
 function process(pcm){
  if(!analyzer)return;const events=analyzer.push({mono:pcm,startFrame:frame});frame+=pcm.length;
- const feature=events.filter(x=>x.type==='features').at(-1);if(feature)parentPort.postMessage({type:'signal',signal:feature});
+ const feature=deliver(events);if(feature)parentPort.postMessage({type:'signal',signal:feature});
 }
 configure(48000);
 function startDemo(){

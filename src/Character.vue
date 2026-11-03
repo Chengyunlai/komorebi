@@ -29,7 +29,7 @@ async function speech(data){audio?.pause();audioSource?.disconnect();if(data.sto
 function tick(now){if(disposed)return;raf=requestAnimationFrame(tick);if(diagnosingLimiter)return;if(document.hidden&&now-lastRender<250)return;lastRender=now;const dt=last?Math.min((now-last)/1000,.1):1/30;last=now;elapsed+=dt;if(!vrm)return;
  const audioMode=['demo','netease','system'].includes(props.audio?.mode),enabled=props.danceEnabled&&!reduced.matches;
  const signal=props.audio?.signal,signalAge=props.audio?.receivedAt===undefined?Infinity:(performance.now()-props.audio.receivedAt)/1000;
- if(signal?.streamId!==lastMusicStream){reliabilityMonitor.clear();reliabilityGate.reset();lastMusicSample=null;lastTrustedMusic=null;lastMusicStream=signal?.streamId}
+ if(signal?.streamId!==lastMusicStream){reliabilityMonitor.clear();reliabilityGate.reset();lastMusicSample=null;lastTrustedMusic=null;lastOnsetFrameRef=null;lastMusicStream=signal?.streamId}
  if(signal&&signal.sampleFrame!==lastMusicSample){lastMusicSample=signal.sampleFrame;reliabilityMonitor.push({time:signal.sampleFrame/signal.sampleRate,state:signal.state,confidence:signal.tempo?.confidence??null,bpm:signal.tempo?.bpm??null})}
  const judgement=reliabilityMonitor.judge();const reliabilityMode=reliabilityGate.push(signalAge<.35?judgement:{reliable:false},elapsed);reliability={mode:reliabilityMode,reason:judgement.reason,trackingRatio:judgement.trackingRatio,confidenceMedian:judgement.confidenceMedian};
  const reliableFeature=reliabilityMode==='beat-aligned'&&signal?.state==='tracking'&&signal?.tempo?.confidence>=.55&&Number.isFinite(signal.tempo.bpm)&&signalAge<.35;
@@ -39,11 +39,12 @@ function tick(now){if(disposed)return;raf=requestAnimationFrame(tick);if(diagnos
  const musicPhase=musicReliable&&lastTrustedMusic.phase!==null?(lastTrustedMusic.phase+(elapsed-lastTrustedMusic.at)*lastTrustedMusic.bpm/60)%1:null;
  let pose=dance.step({dt,audioMode,signal:props.audio?.signal,signalAge:props.audio?.receivedAt===undefined?Infinity:(performance.now()-props.audio.receivedAt)/1000,enabled,style:props.behavior?.choice||'default',preview:['gentle','energetic'].includes(props.behavior?.choice)||props.music?.preview,tempo:props.tempo});
  const plannedActive=props.reliabilityGate?reliability.mode==='beat-aligned':true;
- const onsetFrame=props.audio?.signal?.lastOnsetFrame,newOnset=Number.isFinite(onsetFrame)&&onsetFrame!==lastOnsetFrameRef;
+ const onsetFrame=signal?.lastOnsetFrame,onsetAge=Number.isFinite(onsetFrame)?(signal.sampleFrame-onsetFrame)/signal.sampleRate+signalAge:Infinity;
+ const newOnset=onsetAge>=0&&onsetAge<.18&&Number.isFinite(onsetFrame)&&onsetFrame!==lastOnsetFrameRef;
  if(newOnset)lastOnsetFrameRef=onsetFrame;
  const grooveActive=false;
  const danceStreamActive=enabled&&stepDanceStream(dt);
- if(!danceStreamActive&&!grooveActive&&localDance)localPose=localDance.step({dt,active:props.fullReplay||(plannedActive&&enabled&&['audio','preview'].includes(pose.source.mode)&&pose.source.primitive!=='rest'),beat:pose.source.beat,clockEpoch:pose.source.clockEpoch,timing:pose.source.timing,bpm:localDance.bank.rootPolicy==='motion-matching'?controlBpm:pose.source.bpm,musicReliable,musicPhase,tempoScale:props.tempo/100,energy:props.audio?.signal?.energy??.5,onset:newOnset,onsetStrength:signal?.onsetStrength??0,accent:pose.source.accent??0});
+ if(!danceStreamActive&&!grooveActive&&localDance)localPose=localDance.step({dt,active:props.fullReplay||(plannedActive&&enabled&&['audio','preview'].includes(pose.source.mode)&&pose.source.primitive!=='rest'),beat:pose.source.beat,clockEpoch:pose.source.clockEpoch,timing:pose.source.timing,bpm:localDance.bank.rootPolicy==='motion-matching'?controlBpm:pose.source.bpm,musicReliable,musicPhase,tempoScale:props.tempo/100,energy:props.audio?.signal?.energy??.5,onset:newOnset,onsetStrength:signal?.lastOnsetStrength??signal?.onsetStrength??0,accent:pose.source.accent??0});
  if(danceStreamActive)localPose=null;
  if(idle)pose=idle.step({dt,pose,reducedMotion:reduced.matches});
  if(!danceStreamActive&&!grooveActive){vrm.humanoid.resetNormalizedPose();for(const [name,angles] of Object.entries(pose.rotations)){const node=vrm.humanoid.getNormalizedBoneNode(name);if(node){const [x,y,z]=angles;const sign=vrm.meta.metaVersion==='0'?-1:1;node.quaternion.setFromEuler(new THREE.Euler(x*sign,y,z*sign,'XYZ'))}}

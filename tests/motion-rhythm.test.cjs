@@ -47,3 +47,16 @@ test('manual rhythm preference remains effective when music timing is uncertain'
  let pose;for(let i=0;i<120;i++)pose=p.step({dt:1/60,active:true,musicReliable:false,tempoScale:1.4})
  assert.ok(pose.rhythm.rate>1.39&&pose.rhythm.rate<=1.4)
 })
+
+test('quiet measured hits retain a readable body response across render rates without changing arms',async()=>{
+ const {createFreestyleMotionPlayer}=await import('../src/motion/freestyle-motion.mjs')
+ for(const hz of [30,60,120]){
+  const p=createFreestyleMotionPlayer(frames()),baseline=createFreestyleMotionPlayer(frames());let peak=0,late=0
+  for(let i=0;i<hz;i++){
+   const hit=p.step({dt:1/hz,active:true,onset:i===0,onsetStrength:.08}),plain=baseline.step({dt:1/hz,active:true})
+   const dip=plain.hips[1]-hit.hips[1];peak=Math.max(peak,dip);if(i===Math.round(.1*hz))late=dip
+   assert.deepEqual(hit.rotations.leftUpperArm,plain.rotations.leftUpperArm)
+  }
+  assert.ok(peak>.004,`readable peak at ${hz}Hz: ${peak}`);assert.ok(late>.002,`hit persists at 100ms: ${late}`)
+ }
+})

@@ -40,3 +40,5 @@
 ## 手裙避让与节奏响应
 
 [几何约束、原速与起音回归](garment-rhythm/README.md)：`node examples/garment-rhythm/user_code/main.mjs`。不需要角色素材，验证代理体投影、未知节奏不降速和起音响应；配合手臂骨架及已知拍点测试。
+
+该例同时验证宿主合并批次时保留起音事件强度；见[节奏感退步修复](../docs/implementation/rhythm-onset-delivery.md)。

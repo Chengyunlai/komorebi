@@ -148,8 +148,10 @@ export function createFreestyleMotionPlayer(frames, {
       if(pulseLocked)targetRate=clamp(targetRate+clamp(phaseError*.8,-.18,.18),.8,1.5)
       rate+=(targetRate-rate)*decay(dt,.18)
       const overlap=reliable?clamp(30/bpm,.18,.32):crossfadeSeconds
-      if(on&&onset&&Number.isFinite(onsetStrength)&&onsetStrength>.12&&time-lastOnsetTime>.18){impulse=clamp(onsetStrength,.2,1);lastOnsetTime=time}
-      impulse=Math.max(0,impulse-dt/ .12)
+      if(on&&onset&&Number.isFinite(onsetStrength)&&onsetStrength>0&&time-lastOnsetTime>.18){impulse=.35+.65*clamp(onsetStrength);lastOnsetTime=time}
+      // Duration is independent of amplitude: quiet detected hits must not vanish
+      // in one render frame. No extra phase clock is invented for uncertain music.
+      impulse*=Math.exp(-dt/.10)
       pulseEnvelope+=(impulse-pulseEnvelope)*decay(dt,impulse>pulseEnvelope?.018:.045)
       weight = clamp(weight + (on ? dt / .35 : -dt / .4))
       if (on || weight > 0) {
@@ -171,9 +173,9 @@ export function createFreestyleMotionPlayer(frames, {
       lastPose = pose
       // Short measured-onset torso response remains available without claiming a beat grid.
       if(on&&pulseEnvelope>1e-4){
-        pose={...pose,hips:pose.hips.map((v,i)=>v-(i===1?.012*pulseEnvelope:0)),rotations:{...pose.rotations}}
+        pose={...pose,hips:pose.hips.map((v,i)=>v-(i===1?.028*pulseEnvelope:0)),rotations:{...pose.rotations}}
         const torso=pose.rotations.chest?'chest':pose.rotations.spine?'spine':null
-        if(torso)pose.rotations[torso]=new Quaternion().fromArray(pose.rotations[torso]).multiply(new Quaternion().setFromEuler(new Euler(.025*pulseEnvelope,0,0))).toArray()
+        if(torso)pose.rotations[torso]=new Quaternion().fromArray(pose.rotations[torso]).multiply(new Quaternion().setFromEuler(new Euler(.06*pulseEnvelope,0,0))).toArray()
       }
       if (!on && weight === 0) {segmentAge = 0; outgoing = null; transition = 1}
       return {...pose, weight, clockEpoch: epoch ?? 0, beat, clip: ranges.indexOf(current.range), clipBeat: (position - current.start) / fps, sourceFrame: position,

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import {Vector3} from 'three'
 import {projectGarmentPoint} from '../../../src/motion/garment-clearance.mjs'
 import {createFreestyleMotionPlayer} from '../../../src/motion/freestyle-motion.mjs'
+import {createMusicSignalDelivery} from '../../../electron/music-signal-delivery.mjs'
 
 // Synthetic geometry and recording; no avatar, song or research material required.
 const volume={top:0,bottom:-.3,radiusX:.2,radiusZ:.16}
@@ -20,4 +21,10 @@ for(let i=0;i<120;i++){
  maxPulse=Math.max(maxPulse,pose.rhythm.pulse)
 }
 assert.ok(maxPulse>.2)
+const deliver=createMusicSignalDelivery()
+const delivered=deliver([
+ {type:'onset',streamId:'synthetic',sampleFrame:100,strength:.8},
+ {type:'features',streamId:'synthetic',sampleFrame:150,lastOnsetFrame:100,onsetStrength:0},
+])
+assert.equal(delivered.lastOnsetStrength,.8,'later quiet flux must not erase measured onset strength')
 console.log(JSON.stringify({schema:'garment-rhythm-example/v1',synthetic:true,proxyDepthBefore:before.depth,proxyDepthAfter:after.depth,nativeRate:pose.rhythm.rate,musicMode:pose.rhythm.mode,maxPulse},null,2))
