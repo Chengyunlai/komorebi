@@ -1,0 +1,34 @@
+{
+  "kind": "parameter compatibility only; not generated-motion playback or visual validation",
+  "model": "hiyori_free_t08",
+  "sourceRevision": "d89d5ee6ccb8eda31220f891f7cc5926d0753acd",
+  "results": [
+    {
+      "motion": "nod",
+      "requested": 7,
+      "supported": 5,
+      "missing": [
+        "ParamBrowLY",
+        "ParamBrowRY"
+      ],
+      "physicsConflicts": []
+    },
+    {
+      "motion": "shakehead",
+      "requested": 7,
+      "supported": 7,
+      "missing": [],
+      "physicsConflicts": []
+    },
+    {
+      "motion": "surprised",
+      "requested": 10,
+      "supported": 8,
+      "missing": [
+        "ParamBrowLY",
+        "ParamBrowRY"
+      ],
+      "physicsConflicts": []
+    }
+  ]
+}

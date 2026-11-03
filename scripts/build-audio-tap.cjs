@@ -1,0 +1,5 @@
+const fs=require('node:fs');const path=require('node:path');const {execFileSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..'),output=path.join(root,'native/audio-tap');fs.mkdirSync(output,{recursive:true});
+const plist=path.join(output,'Info.plist');fs.writeFileSync(plist,'<?xml version="1.0"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleIdentifier</key><string>local.komorebi.music-input</string><key>CFBundleName</key><string>木漏日音乐跟拍</string><key>NSAudioCaptureUsageDescription</key><string>仅分析本机播放的音频来驱动人物律动，不保存或上传音频。</string></dict></plist>');
+execFileSync('swiftc',['-O','-target','arm64-apple-macos14.2',path.join(root,'electron/native/audio-tap.swift'),'-Xlinker','-sectcreate','-Xlinker','__TEXT','-Xlinker','__info_plist','-Xlinker',plist,'-o',path.join(output,'komorebi-audio-tap')],{stdio:'inherit'});
+execFileSync('/usr/bin/codesign',['--force','--sign','-',path.join(output,'komorebi-audio-tap')],{stdio:'inherit'});

@@ -1,0 +1,5 @@
+import {samplePhrase} from '../../../src/motion/vrm-phrases.mjs';
+import {VRMDanceController} from '../../../src/motion/vrm-dance.mjs';
+const h=1e-5,a=samplePhrase(8-h,0).features,b=samplePhrase(0,1).features,c=samplePhrase(h,1).features;
+const keys=Object.keys(b);console.log('A→B seam',JSON.stringify({maxPositionDifference:Math.max(...keys.map(k=>Math.abs(a[k]-c[k]))),maxVelocityDifference:Math.max(...keys.map(k=>Math.abs((b[k]-a[k])/h-(c[k]-b[k])/h))),restReset:false}));
+for(const bpm of [90,120]){const controller=new VRMDanceController();let result;for(let frame=0;frame<=240;frame++){const t=frame/30;result=controller.step({dt:1/30,audioMode:true,signalAge:0,signal:{streamId:'example',sampleRate:48000,sampleFrame:frame*1600,lastOnsetFrame:Math.floor(t*bpm/60)*48000*60/bpm,state:'tracking',energy:.8,bands:{low:.2,mid:.5,high:.3},tempo:{bpm,confidence:.7}}})}console.log(JSON.stringify({bpm,elapsedSeconds:8,beat:result.source.beat,phrase:result.source.primitive,support:result.source.support}))}

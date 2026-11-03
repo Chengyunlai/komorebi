@@ -1,0 +1,15 @@
+name: Idea / 建议
+description: Describe a user problem and desired outcome / 描述问题和效果
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 用户问题 / User problem
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: 希望看到的效果与验收 / Outcome and acceptance
+    validations:
+      required: true

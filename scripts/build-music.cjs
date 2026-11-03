@@ -1,0 +1,16 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const os=require('node:os');
+const {execFileSync}=require('node:child_process');
+const root=path.resolve(__dirname,'..');
+if(process.platform!=='darwin')throw new Error('音乐状态桥目前适用于 macOS。');
+const source=path.join(root,'vendor/mediaremote-adapter');
+const build=path.resolve(process.env.KOMOREBI_BUILD_DIR || path.join(os.tmpdir(),'komorebi-mediaremote-build'));
+execFileSync('cmake',['-S',source,'-B',build,'-DCMAKE_BUILD_TYPE=Release',`-DCMAKE_OSX_ARCHITECTURES=${process.env.KOMOREBI_TARGET_ARCH||(process.arch==='x64'?'x86_64':process.arch)}`],{stdio:'inherit'});
+execFileSync('cmake',['--build',build,'--target','MediaRemoteAdapter','--parallel','4'],{stdio:'inherit'});
+const target=path.join(root,'native/mediaremote');fs.mkdirSync(target,{recursive:true});
+fs.rmSync(path.join(target,'MediaRemoteAdapter.framework'),{recursive:true,force:true});
+fs.cpSync(path.join(build,'MediaRemoteAdapter.framework'),path.join(target,'MediaRemoteAdapter.framework'),{recursive:true,verbatimSymlinks:true});
+fs.copyFileSync(path.join(source,'bin/mediaremote-adapter.pl'),path.join(target,'mediaremote-adapter.pl'));
+fs.copyFileSync(path.join(source,'LICENSE'),path.join(target,'LICENSE'));
+console.log('音乐状态桥已构建。');

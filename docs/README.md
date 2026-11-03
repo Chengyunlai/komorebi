@@ -1,0 +1,16 @@
+# 文档导航
+
+面向使用者：[中文介绍](../README.md) · [English](../README.en.md) · [使用与配置](usage.md)。
+
+面向贡献者：[贡献指南](../CONTRIBUTING.md) → [当前上下文](context.md) → [可运行示例](../examples/README.md)。
+
+| 目的 | 入口 |
+| --- | --- |
+| 看当前优先级与验收 | [项目管理](project/README.md)、[看板](project/BACKLOG.md)、[里程碑](project/MILESTONES.md) |
+| 理解音乐/身体/舞蹈职责 | [知识黑板](design/music-dance-blackboard.md) → [工程依赖](design/music-dance-engineering.md) |
+| 理解声音陪伴方向 | [声音响应设计](design/sound-reactive-companion.md) |
+| 追溯历史决策 | [实现记录](implementation/)（Stage 仅表示当时实验，不等于当前默认行为） |
+| 查看第三方边界 | [第三方说明](../THIRD-PARTY-NOTICES.md) |
+| 查看本次公开整理 | [开源快照记录](implementation/open-source-snapshot.md) |
+
+`brief.md`、`qa.md` 是早期原型范围与阶段 QA；实际运行入口以 README、源码与当前看板为准。`context.md` 保留演进记录，应结合最后阶段与当前实现阅读。历史记录提及的本机图像、歌曲分析与动作数据不随开源发布，见 [证据说明](evidence/README.md)。

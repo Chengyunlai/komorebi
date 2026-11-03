@@ -1,0 +1,3 @@
+import {VRMDanceController} from '../../../src/motion/vrm-dance.mjs';
+const director=new VRMDanceController();let last='';
+for(let frame=0;frame<1800;frame++){const time=frame/30,energy=time<12?.15:time<24?.42:time<42?.9:.16;const pose=director.step({dt:1/30,audioMode:true,signalAge:0,signal:{streamId:'musical-example',sampleRate:48000,sampleFrame:frame*1600,lastOnsetFrame:Math.floor(frame/15)*24000,state:'tracking',energy,bands:{low:energy*.7,mid:energy*.5,high:energy*.25},onsetStrength:.8,tempo:{bpm:120,confidence:.7}}});const s=pose.source,key=[s.primitive,s.arrangement,s.musicalMode].join('/');if(key!==last){last=key;console.log(JSON.stringify({time,phrase:s.primitive,arrangement:['主题','呼应','对比','回归'][s.arrangement],response:s.musicalMode,bpm:s.bpm}))}}

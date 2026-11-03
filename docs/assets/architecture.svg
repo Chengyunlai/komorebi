@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" role="img" aria-labelledby="title desc">
+<title id="title">Komorebi architecture</title><desc id="desc">Audio flows through signal analysis, motion decisions and body execution. A separate task pipeline uses the local Codex CLI and confirmed project memory.</desc>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0 0L7 3L0 6" fill="none" stroke="#78916c"/></marker></defs>
+<rect width="1200" height="470" rx="24" fill="#f7f5eb"/>
+<g font-family="system-ui, sans-serif" fill="#263e30"><text x="48" y="55" font-size="18" letter-spacing="3">KOMOREBI / SEPARATE RESPONSIBILITIES</text>
+<g fill="#e8eddf" stroke="#d0d9c4"><rect x="48" y="94" width="240" height="142" rx="16"/><rect x="336" y="94" width="240" height="142" rx="16"/><rect x="624" y="94" width="240" height="142" rx="16"/><rect x="912" y="94" width="240" height="142" rx="16"/></g>
+<g font-size="23"><text x="70" y="138">声音 / Audio</text><text x="358" y="138">信号 / Signal</text><text x="646" y="138">动作 / Motion</text><text x="934" y="138">身体 / Body</text></g>
+<g font-size="16" fill="#536650"><text x="70" y="175">NetEase · System output</text><text x="70" y="203">Local PCM capture</text><text x="358" y="175">Onsets · Energy · Tempo</text><text x="358" y="203">Observations + confidence</text><text x="646" y="175">Selection · Planning</text><text x="646" y="203">Materials + transitions</text><text x="934" y="175">Retarget · Blend · IK</text><text x="934" y="203">Three.js / VRM</text></g>
+<g stroke="#78916c" stroke-width="2" marker-end="url(#a)"><path d="M288 165H323"/><path d="M576 165H611"/><path d="M864 165H899"/></g>
+<path d="M48 274H1152" stroke="#d0d9c4"/>
+<text x="48" y="314" font-size="17" letter-spacing="2">TASKS / EXPLICIT SUBMISSION &amp; CONFIRMATION</text>
+<g font-size="20"><text x="48" y="369">Clipboard / Screenshot</text><text x="432" y="369">Local Codex CLI</text><text x="854" y="369">Project memory</text></g>
+<g stroke="#78916c" stroke-width="2" marker-end="url(#a)"><path d="M285 361H405"/><path d="M655 361H825"/></g>
+<g font-size="15" fill="#536650"><text x="48" y="409">User-selected context</text><text x="432" y="409">Read-only analysis</text><text x="854" y="409">User-confirmed conclusions</text></g></g></svg>

@@ -1,0 +1,57 @@
+{
+  "name": "komorebi-desktop",
+  "productName": "Komorebi",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "build": "vite build",
+    "build:music": "node scripts/build-music.cjs",
+    "start": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "package:mac": "node scripts/package-mac.cjs",
+    "build:audio": "node scripts/build-audio-tap.cjs",
+    "sync:signal": "node scripts/sync-music-signal.cjs",
+    "verify": "npm test && npm run build",
+    "check:release": "node scripts/check-release.cjs"
+  },
+  "dependencies": {
+    "@pixi/unsafe-eval": "^6.5.10",
+    "@pixiv/three-vrm": "^3.5.5",
+    "dompurify": "^3.4.17",
+    "lucide-vue-next": "^0.577.0",
+    "marked": "^18.1.2",
+    "pixi-live2d-display": "0.4.0",
+    "pixi.js": "6.5.10",
+    "three": "^0.186.1",
+    "vue": "^3.5.0",
+    "wlipsync": "1.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "electron": "45.1.0",
+    "vite": "^7.0.0"
+  },
+  "imports": {
+    "#motion": "./src/motion/music-motion-simulator.mjs",
+    "#music-analysis": "./electron/vendor/music-signal/analyzer.mjs",
+    "#demo-audio": "./electron/vendor/music-signal/demo-audio.mjs",
+    "#motion-curves": "./src/motion-lab/curves.mjs",
+    "#bvh": "./src/motion-lab/bvh.mjs",
+    "#retarget": "./src/motion-lab/retarget.mjs"
+  },
+  "description": "木漏日 — a music-responsive desktop companion for macOS",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Chengyunlai/komorebi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Chengyunlai/komorebi/issues"
+  },
+  "homepage": "https://github.com/Chengyunlai/komorebi#readme"
+}
