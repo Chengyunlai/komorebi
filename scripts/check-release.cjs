@@ -3,7 +3,7 @@ const {execFileSync}=require('node:child_process');
 const path=require('node:path');
 const files=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);
 const indexed=new Set(files),errors=[];
-const forbidden=/(^|\/)(node_modules|release|dist|computer-use|native)\/|^public\/vendor\/|^docs\/[^/]*-preview\.png$|^docs\/evidence\/(?!README\.md$)|(^|\/)\.env(?:\.|$)|\.(?:vrm|vroid|bvh|npy|npz|pt|pth|ckpt|safetensors|sqlite\w*|db|pem|key|mp3|wav|m4a|mp4)$/i;
+const forbidden=/(^|\/)(node_modules|release|dist|computer-use)\/|^native\/|^public\/vendor\/|^docs\/[^/]*-preview\.png$|^docs\/evidence\/(?!README\.md$)|(^|\/)\.env(?:\.|$)|\.(?:vrm|vroid|bvh|npy|npz|pt|pth|ckpt|safetensors|sqlite\w*|db|pem|key|mp3|wav|m4a|mp4)$/i;
 for(const file of files){
  if(forbidden.test(file)&&!file.endsWith('.env.example'))errors.push(`Excluded asset in index: ${file}`);
  const data=execFileSync('git',['show',`:${file}`],{maxBuffer:20*1024*1024});

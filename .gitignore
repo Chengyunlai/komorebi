@@ -3,7 +3,7 @@ dist/
 release/
 .DS_Store
 *.log
-native/
+/native/
 
 .env
 .env.*
