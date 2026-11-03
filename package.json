@@ -31,8 +31,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.10",
-    "electron": "45.1.0",
-    "vite": "^7.0.0"
+    "electron": "45.2.1",
+    "vite": "^8.3.5"
   },
   "imports": {
     "#motion": "./src/motion/music-motion-simulator.mjs",
