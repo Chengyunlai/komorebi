@@ -17,9 +17,9 @@ updates:
     # Live2D 0.4 requires Pixi 6. Upgrade this stack together in a migration PR.
     ignore:
       - dependency-name: pixi.js
-        update-types: [version-update:semver-major]
+        update-types: ['version-update:semver-major']
       - dependency-name: '@pixi/unsafe-eval'
-        update-types: [version-update:semver-major]
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:

@@ -42,3 +42,5 @@ Actions 升级需验证实际受影响的工作流；普通 CI 通过不能代�
 ## English quick guide
 
 Read README → context → examples → the relevant implementation note. Run `npm ci` and `npm run verify`; stage intended files, then run `npm run check:release`. Keep PRs focused and include validation and limitations. Native music integration needs macOS, Xcode CLI tools and CMake. Use synthetic fixtures; never commit private data, keys, recordings, character assets, research motion or model weights. Preserve third-party notices. Document API/path changes. Visual dance acceptance is separate from passing tests. Contributions are licensed under MIT, subject to third-party terms.
+
+Group only minor/patch dependency updates; review major upgrades separately. Electron and Three.js always get separate PRs. Keep Pixi 6 and unsafe-eval 6 together until the Live2D integration is migrated; do not bypass peer conflicts. Electron/Vite upgrades need an application smoke check. Actions upgrades must exercise the affected workflow, including downloading and extracting packaging artifacts.
