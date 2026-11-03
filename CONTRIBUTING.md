@@ -5,7 +5,7 @@
 ## 开始开发
 
 1. 读 [README](README.md) → [上下文](docs/context.md) → [examples](examples/README.md) → 对应实现记录；当前优先级见 [BACKLOG](docs/project/BACKLOG.md)。
-2. 使用 Node 22.13+，`npm ci` 后运行 `npm run verify`。音乐原生集成需要 macOS、Xcode Command Line Tools 和 CMake。
+2. 使用 Node 22.13+，`npm ci` 后运行 `npm run verify`。本机启动前另运行 `npm run setup:electron` 安装 Electron 运行时。音乐原生集成需要 macOS、Xcode Command Line Tools 和 CMake。
 3. 选一个相关 example，先运行 `user_code`，再读 `core`。例子统一放在 `examples/`。
 
 | 目录 | 负责内容 |

@@ -11,6 +11,9 @@
 | 理解声音陪伴方向 | [声音响应设计](design/sound-reactive-companion.md) |
 | 追溯历史决策 | [实现记录](implementation/)（Stage 仅表示当时实验，不等于当前默认行为） |
 | 查看第三方边界 | [第三方说明](../THIRD-PARTY-NOTICES.md) |
+| 查看手裙避让和节奏响应 | [身体约束与音乐时间接口](implementation/garment-clearance-rhythm.md) |
+| 查看动作连续性修复 | [播放控制、选窗与实机验证](implementation/motion-playback-continuity.md) |
+| 查看公开演示来源 | [GitHub 实机演示视频](implementation/github-demo-video.md) |
 | 查看本次公开整理 | [开源快照记录](implementation/open-source-snapshot.md) |
 
 `brief.md`、`qa.md` 是早期原型范围与阶段 QA；实际运行入口以 README、源码与当前看板为准。`context.md` 保留演进记录，应结合最后阶段与当前实现阅读。历史记录提及的本机图像、歌曲分析与动作数据不随开源发布，见 [证据说明](evidence/README.md)。

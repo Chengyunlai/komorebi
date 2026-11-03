@@ -20,6 +20,9 @@ jobs:
       - run: npm ci
         env:
           npm_config_arch: arm64
+      - run: npm run setup:electron
+        env:
+          npm_config_arch: arm64
       - run: npm run check:release
       - run: npm run verify
       - run: npm run build:music

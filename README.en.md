@@ -7,6 +7,12 @@ A lightweight desktop companion prototype. Keep a character beside your work, cl
 
 > Source prototype for macOS Apple Silicon. Full dance quality, long-running stability and public installers remain under evaluation. The cover is a brand illustration, not an app screenshot. Bring your own licensed VRM avatar.
 
+## Live demo · 30 seconds
+
+https://github.com/user-attachments/assets/217548af-7558-4319-9b74-b3ae99c29fe9
+
+“Boom Boom Pow” — Black Eyed Peas. A live recording of the companion window from the start of the song, with captured playback audio at original speed. The demo uses a user-imported Jessair Cute Model; see [character and music notices](THIRD-PARTY-NOTICES.md).
+
 ## Features
 
 - **Desktop presence:** a draggable, transparent, always-on-top VRM character with a compact conversation bubble and an on-demand management window.
@@ -25,6 +31,7 @@ Requires **macOS and Node.js 22.13+**. Native music components also need Xcode C
 git clone https://github.com/Chengyunlai/komorebi.git
 cd komorebi
 npm ci
+npm run setup:electron
 npm run build:music
 npm run build:audio
 npm run build
@@ -76,4 +83,4 @@ Next priorities are continuous dance, reliable music response and everyday stabi
 
 ## License
 
-Original source is [MIT](LICENSE). Third-party code, Live2D/Cubism, imported characters, motions, models and songs retain their own terms. MIT does not grant rights to those assets. Optional Live2D study resources are excluded; an original VRM idle fallback is included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Original source is [MIT](LICENSE). The optional research adapter `scripts/bailando-stream-server.py` includes upstream sampling code and is separately covered by the [S-Lab non-commercial license](docs/licenses/Bailando-S-Lab-LICENSE.txt), outside the MIT scope. Third-party code, Live2D/Cubism, imported characters, motions, models and songs retain their own terms. MIT does not grant rights to those assets. Optional Live2D study resources are excluded; an original VRM idle fallback is included. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

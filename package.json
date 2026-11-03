@@ -14,7 +14,8 @@
     "build:audio": "node scripts/build-audio-tap.cjs",
     "sync:signal": "node scripts/sync-music-signal.cjs",
     "verify": "npm test && npm run build",
-    "check:release": "node scripts/check-release.cjs"
+    "check:release": "node scripts/check-release.cjs",
+    "setup:electron": "node node_modules/electron/install.js"
   },
   "dependencies": {
     "@pixi/unsafe-eval": "^6.5.10",
@@ -53,5 +54,10 @@
   "bugs": {
     "url": "https://github.com/Chengyunlai/komorebi/issues"
   },
-  "homepage": "https://github.com/Chengyunlai/komorebi#readme"
+  "homepage": "https://github.com/Chengyunlai/komorebi#readme",
+  "overrides": {
+    "pixi-live2d-display": {
+      "gh-pages": "6.3.0"
+    }
+  }
 }

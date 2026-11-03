@@ -4,9 +4,13 @@
 
 - `public/vendor/`（Live2D 日和与 Cubism Core）、所有用户 VRM/BVH、研究派生动作、音乐、权重和本机证据均不在公开快照中。
 - 默认 VRM 待机后备 `src/motion/default-idle.mjs` 为本项目原创。若用户自行安装日和动作，解释该动作仍受其原素材许可约束。
-- `scripts/bailando-stream-server.py` 是可选 Motius/Bailando 研究适配，涉及其采样流程；Motius、Bailando、AIST++、SMPL 与模型权重的条款需单独核对，源码 MIT 不授予它们的使用权。不随包附框架或权重，也不默认下载。
+- `scripts/bailando-stream-server.py` 是可选 Motius/Bailando 研究适配，包含经 Motius 改编的 Bailando 自回归采样流程，**不适用根目录 MIT**。该研究脚本按上游 S-Lab License 1.0 限非商业用途，完整条款见 `docs/licenses/Bailando-S-Lab-LICENSE.txt`；修改包括温度采样与流式对接。来源：https://github.com/lisiyao21/Bailando 、https://github.com/ZeyuLing/Motius 。Motius、Bailando、AIST++、SMPL 与模型权重的条款需单独核对，源码 MIT 不授予它们的使用权。不随包附框架或权重，也不默认下载。
 - 本机 stage-44 动作库来自 tulay-hub/dance-dataset；即使上游仓库声明 MIT，本项目不据此重新分发其中动作或派生帧，使用者应自行核实素材权利。
 - README 封面为 AI 生成的原创品牌插画，不代表已提供角色资产或应用截图。
+
+## README 实机演示视频
+
+用户选定的 30 秒演示附件：https://github.com/user-attachments/assets/217548af-7558-4319-9b74-b3ae99c29fe9 。视频为本机实际桌宠窗口与播放声音的录制，未将角色文件或歌曲文件加入源码；附件本身不适用源码 MIT 许可。演示使用 Jessair 的 Cute Model（下文提供来源）与 Black Eyed Peas《Boom Boom Pow》，角色和音乐权利仍归各自权利人。公开视频不构成对角色、音乐或动作素材的再授权。
 
 # 第三方来源与许可
 

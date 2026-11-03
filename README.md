@@ -8,6 +8,12 @@
 
 > 当前是面向 macOS Apple Silicon 的源码原型。完整舞蹈、长期稳定性和公开安装包仍在验证；封面为品牌插画，并非应用截图。角色模型需自行导入。
 
+## 实机演示 · 30 秒
+
+https://github.com/user-attachments/assets/217548af-7558-4319-9b74-b3ae99c29fe9
+
+《Boom Boom Pow》— Black Eyed Peas。歌曲开头的桌宠窗口实录，含实际播放声音，保持原速。演示角色为用户自行导入的 Jessair Cute Model；[角色与音乐权利说明](THIRD-PARTY-NOTICES.md)。
+
 ## 可以做什么
 
 - **桌面陪伴**：透明置顶的 VRM 角色，支持拖动、跨桌面显示与轻量对话气泡，管理窗口按需打开。
@@ -26,13 +32,14 @@
 git clone https://github.com/Chengyunlai/komorebi.git
 cd komorebi
 npm ci
+npm run setup:electron
 npm run build:music
 npm run build:audio
 npm run build
 npm start
 ```
 
-在“配置与管理 → 偏好设置 → 桌面角色”导入有使用许可的 `.vrm`。仓库不附带角色、研究舞蹈、模型权重、音乐或实际歌词。没有原生音乐组件时可跳过两步 `build:*`，先体验任务和角色功能；音乐采集不可用。
+在“配置与管理 → 偏好设置 → 桌面角色”导入有使用许可的 `.vrm`。源码与应用包不附带角色、研究舞蹈、模型权重、音乐或实际歌词。没有原生音乐组件时可跳过两步 `build:*`，先体验任务和角色功能；音乐采集不可用。
 
 默认任务后端需要已安装并登录的独立 Codex CLI；也可在偏好设置中自配火山引擎兼容端点与 Key。音乐和角色显示无需 LLM Key。详见[使用与配置](docs/usage.md)。
 
@@ -77,4 +84,4 @@ CI 自动检查 Linux/Node 22、24 的测试与构建，以及 macOS 原生组�
 
 ## 许可
 
-自有源码采用 [MIT](LICENSE)。第三方代码、Live2D/Cubism、用户导入角色、动作、模型及歌曲保留各自许可；MIT 不授予这些资产的使用权。Live2D 研究资源不随开源快照提供，默认 VRM 待机包含原创后备动作。来源及使用边界见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
+自有源码采用 [MIT](LICENSE)。可选研究脚本 `scripts/bailando-stream-server.py` 含上游采样流程，单独适用 [S-Lab 非商业许可](docs/licenses/Bailando-S-Lab-LICENSE.txt)，不属于 MIT 范围。第三方代码、Live2D/Cubism、用户导入角色、动作、模型及歌曲保留各自许可；MIT 不授予这些资产的使用权。Live2D 研究资源不随开源快照提供，默认 VRM 待机包含原创后备动作。来源及使用边界见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
