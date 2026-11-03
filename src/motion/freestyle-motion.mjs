@@ -1,4 +1,5 @@
-import {Quaternion, Vector3} from 'three'
+import {Quaternion, Vector3, Euler} from 'three'
+import {estimateMotionPulses, motionPulsePhase} from './motion-pulses.mjs'
 
 const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v))
 const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t)
@@ -15,16 +16,19 @@ const decay = (dt, seconds) => seconds > 0 ? 1 - Math.exp(-dt / seconds) : 1
 export function createFreestyleMotionPlayer(frames, {
   fps = 15,
   segmentSeconds = 4.8,
-  crossfadeSeconds = .6,
-  sourceBpm = 120,
+  crossfadeSeconds = .28,
+  sourceBpm = null,
   recentSeconds = 3,
   clips = [{id: 0, start: 0, end: frames.length - 1}],
-  smoothingSeconds = .06,
+  smoothingSeconds = 0,
+  sourceSmoothing = .12,
 } = {}) {
   if (!Array.isArray(frames) || frames.length < 8) throw new TypeError('Freestyle player requires compiled frames')
-  for (const [name, value] of Object.entries({fps, segmentSeconds, sourceBpm})) {
+  for (const [name, value] of Object.entries({fps, segmentSeconds})) {
     if (!Number.isFinite(value) || value <= 0) throw new TypeError(`${name} must be positive`)
   }
+  if(sourceBpm !== null && (!Number.isFinite(sourceBpm) || sourceBpm <= 0))throw new TypeError('sourceBpm must be positive or unknown')
+  if(!Number.isFinite(sourceSmoothing)||sourceSmoothing<0||sourceSmoothing>.25)throw new TypeError('Invalid sourceSmoothing')
   for (const [name, value] of Object.entries({crossfadeSeconds, smoothingSeconds, recentSeconds})) {
     if (!Number.isFinite(value) || value < 0) throw new TypeError(`${name} must be nonnegative`)
   }
@@ -46,6 +50,7 @@ export function createFreestyleMotionPlayer(frames, {
     activity[i] = angle(frames[i - 1], frames[i], bones) * fps
     bodyActivity[i] = angle(frames[i - 1], frames[i], bodyBones) * fps
   }
+  for(const range of ranges){range.pulses=estimateMotionPulses(bodyActivity,range,fps);if(sourceBpm&&range.pulses.events.length)Object.assign(range.pulses,{period:60/sourceBpm,confidence:1})}
   const prefix = values => {const p = new Float64Array(values.length + 1); for (let i = 0; i < values.length; i++) p[i + 1] = p[i] + values[i]; return p}
   const activitySum = prefix(activity), bodySum = prefix(bodyActivity)
   const average = (sum, start, end) => (sum[end + 1] - sum[start + 1]) / Math.max(1, end - start)
@@ -53,7 +58,7 @@ export function createFreestyleMotionPlayer(frames, {
   const candidates = []
   for (const range of ranges) {
     // Reserve overlap material so the outgoing window can continue at the next cut.
-    const span = Math.min(range.end - range.start, Math.ceil((segmentSeconds * 1.2 + crossfadeSeconds * 1.2) * fps))
+    const span = Math.min(range.end - range.start, Math.ceil((segmentSeconds * 1.5 + Math.max(crossfadeSeconds,.32) * 1.5) * fps))
     for (let start = range.start; start + span <= range.end; start += stride) {
       candidates.push({range, start, end: start + span, activity: average(activitySum, start, start + span), body: average(bodySum, start, start + span), leadBody: average(bodySum, start, start + Math.min(span, Math.ceil(fps * .8)))})
     }
@@ -65,10 +70,19 @@ export function createFreestyleMotionPlayer(frames, {
   const eligible = pool.length ? pool : candidates
   if (!eligible.length) throw new TypeError('No playable motion windows')
 
+  const smoothedFrames=new Map()
+  function sourceFrame(index,range){
+    if(!sourceSmoothing)return frames[index]
+    if(!smoothedFrames.has(index)){
+      const previous=frames[Math.max(range.start,index-1)],next=frames[Math.min(range.end,index+1)]
+      smoothedFrames.set(index,blendPoses(blendPoses(frames[index],previous,sourceSmoothing/(1-sourceSmoothing)),next,sourceSmoothing))
+    }
+    return smoothedFrames.get(index)
+  }
   function sampleAt(position, range) {
     const p = clamp(position, range.start, range.end)
     const i = Math.floor(p), j = Math.min(range.end, i + 1), t = p - i
-    const a = frames[i], b = frames[j]
+    const a = sourceFrame(i,range), b = sourceFrame(j,range)
     return {
       rotations: Object.fromEntries(Object.entries(a.rotations).map(([bone, quat]) => [bone, b.rotations[bone] ? mixQuat(quat, b.rotations[bone], t) : quat.slice()])),
       hips: mix(a.hips, b.hips, t),
@@ -100,6 +114,7 @@ export function createFreestyleMotionPlayer(frames, {
   }
   let current, position = 0, segmentAge = 0, outgoing = null, transition = 1, lastPose = null
   let segmentIndex = 0, switches = 0, weight = 0, filteredEnergy = .5, rate = 1
+  let time=0,lastOnsetTime=-Infinity,impulse=0,pulseEnvelope=0
   const recentStarts = []
   function chooseStart(currentPose) {
     const target = (.2 + filteredEnergy * .8) * activityScale
@@ -117,34 +132,52 @@ export function createFreestyleMotionPlayer(frames, {
   }
   return {
     bank: {clips: ranges.map(c => ({...c, beats: null, anchors: [], activity: 1})), beatAligned: false, worldAlignment: 'y-up', rootPolicy: 'motion-matching', execution: 'source-ankle/v1'},
-    step({dt = 1 / 60, active: on = false, energy = .5, beat = 0, bpm = null, clockEpoch: epoch} = {}) {
+    step({dt = 1 / 60, active: on = false, energy = .5, beat = 0, bpm = null, clockEpoch: epoch, musicReliable=false, musicPhase=null, onset=false, onsetStrength=0, tempoScale=1} = {}) {
       dt = clamp(Number.isFinite(dt) ? dt : 0, 0, .1)
       const inputEnergy = clamp(Number.isFinite(energy) ? energy : .5)
       if (!current) {filteredEnergy = inputEnergy; current = chooseStart(null); position = current.start}
       filteredEnergy += (inputEnergy - filteredEnergy) * decay(dt, .4)
-      const targetRate = clamp((Number.isFinite(bpm) && bpm > 0 ? bpm : sourceBpm) / sourceBpm, .85, 1.2)
-      rate += (targetRate - rate) * decay(dt, .5)
+      time+=dt
+      const track=current.range.pulses,materialPhase=motionPulsePhase(track,position+dt*fps*rate,fps)
+      const reliable=musicReliable&&Number.isFinite(bpm)&&bpm>0
+      const pulseLocked=reliable&&materialPhase!==null&&Number.isFinite(musicPhase)
+      const sourceTempo=sourceBpm??(track.period?60/track.period:null)
+      // Unknown source/music tempo preserves authored speed; never divide a fallback 100 by 120.
+      let targetRate=reliable&&sourceTempo?clamp(bpm/sourceTempo,.85,1.5):clamp(Number.isFinite(tempoScale)?tempoScale:1,.6,1.5)
+      const phaseError=pulseLocked?((musicPhase-materialPhase+.5)%1+1)%1-.5:null
+      if(pulseLocked)targetRate=clamp(targetRate+clamp(phaseError*.8,-.18,.18),.8,1.5)
+      rate+=(targetRate-rate)*decay(dt,.18)
+      const overlap=reliable?clamp(30/bpm,.18,.32):crossfadeSeconds
+      if(on&&onset&&Number.isFinite(onsetStrength)&&onsetStrength>.12&&time-lastOnsetTime>.18){impulse=clamp(onsetStrength,.2,1);lastOnsetTime=time}
+      impulse=Math.max(0,impulse-dt/ .12)
+      pulseEnvelope+=(impulse-pulseEnvelope)*decay(dt,impulse>pulseEnvelope?.018:.045)
       weight = clamp(weight + (on ? dt / .35 : -dt / .4))
       if (on || weight > 0) {
         position = Math.min(current.range.end, position + dt * fps * rate)
         segmentAge += dt
         if (outgoing) outgoing.position = Math.min(outgoing.range.end, outgoing.position + dt * fps * rate)
-        if (on && transition >= 1 && (segmentAge >= segmentSeconds || position >= current.range.end)) {
+        if (on && transition >= 1 && (segmentAge >= segmentSeconds && (!pulseLocked || musicPhase<.1 || segmentAge>segmentSeconds+.8) || position >= current.range.end)) {
           const next = chooseStart(lastPose ?? sampleAt(position, current.range))
           outgoing = {position, range: current.range}
           current = next; position = next.start; segmentAge = 0; transition = 0; switches++; segmentIndex++
           recentStarts.push(next.start); if (recentStarts.length > 12) recentStarts.shift()
         }
-        transition = crossfadeSeconds ? Math.min(1, transition + dt / crossfadeSeconds) : 1
+        transition = overlap ? Math.min(1, transition + dt / overlap) : 1
       }
       let pose = sampleAt(position, current.range)
       if (outgoing && transition < 1) pose = blendPoses(sampleAt(outgoing.position, outgoing.range), pose, smooth(transition))
       else outgoing = null
       if (lastPose && (on || weight > 0)) pose = blendPoses(lastPose, pose, decay(dt, smoothingSeconds))
       lastPose = pose
+      // Short measured-onset torso response remains available without claiming a beat grid.
+      if(on&&pulseEnvelope>1e-4){
+        pose={...pose,hips:pose.hips.map((v,i)=>v-(i===1?.012*pulseEnvelope:0)),rotations:{...pose.rotations}}
+        const torso=pose.rotations.chest?'chest':pose.rotations.spine?'spine':null
+        if(torso)pose.rotations[torso]=new Quaternion().fromArray(pose.rotations[torso]).multiply(new Quaternion().setFromEuler(new Euler(.025*pulseEnvelope,0,0))).toArray()
+      }
       if (!on && weight === 0) {segmentAge = 0; outgoing = null; transition = 1}
       return {...pose, weight, clockEpoch: epoch ?? 0, beat, clip: ranges.indexOf(current.range), clipBeat: (position - current.start) / fps, sourceFrame: position,
-        support: 'double', timing: 'estimated', phaseError: 0, transitionPolicy: 'moving-window', switches, blockedTransitions: 0, limiter: {mode: 'coherent-pose-filter', smoothingSeconds}, plan: null,
+        support: 'double', timing: pulseLocked?'tracking':'estimated', phaseError: phaseError??0, rhythm:{mode:pulseLocked?'kinematic-pulse-lock':reliable?'tempo-only':'onset-reactive',rate,sourceTempo,materialConfidence:track.confidence,pulse:pulseEnvelope}, transitionPolicy: 'moving-window', switches, blockedTransitions: 0, limiter: {mode: 'coherent-pose-filter', smoothingSeconds}, plan: null,
         source: {mode: weight > 0 ? 'audio' : 'waiting', primitive: weight > 0 ? 'motion-matching' : 'rest', bpm}}
     },
   }

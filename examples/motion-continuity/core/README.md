@@ -5,3 +5,5 @@
 - `src/Character.vue`：可见时逐 rAF 渲染；动作库/实验流式来源互斥，身体执行负责末端姿态。
 
 源码接口为 `createFreestyleMotionPlayer(frames, {fps, clips, segmentSeconds, crossfadeSeconds, smoothingSeconds})`；`clips` 的 `start/end` 均为包含端点的整数索引。缺省时所有帧视为一支舞。音乐输入控制选段与平滑变速，不缩放源关节角。素材只含手部动作时不能凭控制器创造新的舞步。
+
+后续节奏修复将默认输出过滤 `smoothingSeconds` 设为 0，使用 `sourceSmoothing` 对预录材料做对称平滑以保留时间。手裙避让在身体执行后独立处理，见 [新回归](../../garment-rhythm/README.md)。

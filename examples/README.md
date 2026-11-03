@@ -36,3 +36,7 @@
 ## 日常播放连续性回归
 
 [连续窗口与手部碎抖](motion-continuity/README.md)：`node examples/motion-continuity/user_code/main.mjs`。纯合成姿态，不需要本机角色或动作素材；验证身体参与、能量抖动隔离和停止淡出。实现见 [播放连续性修复](../docs/implementation/motion-playback-continuity.md)。
+
+## 手裙避让与节奏响应
+
+[几何约束、原速与起音回归](garment-rhythm/README.md)：`node examples/garment-rhythm/user_code/main.mjs`。不需要角色素材，验证代理体投影、未知节奏不降速和起音响应；配合手臂骨架及已知拍点测试。
