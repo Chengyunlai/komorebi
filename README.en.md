@@ -25,6 +25,7 @@ Requires **macOS and Node.js 22.13+**. Native music components also need Xcode C
 git clone https://github.com/Chengyunlai/komorebi.git
 cd komorebi
 npm ci
+npm run setup:electron
 npm run build:music
 npm run build:audio
 npm run build

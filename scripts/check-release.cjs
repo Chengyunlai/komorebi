@@ -3,6 +3,9 @@ const {execFileSync}=require('node:child_process');
 const path=require('node:path');
 const files=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);
 const indexed=new Set(files),errors=[];
+for(const required of ['electron/native/audio-tap.swift','scripts/build-music.cjs','scripts/build-audio-tap.cjs','LICENSE','THIRD-PARTY-NOTICES.md']){
+ if(!indexed.has(required))errors.push(`Required source missing from index: ${required}`);
+}
 const forbidden=/(^|\/)(node_modules|release|dist|computer-use)\/|^native\/|^public\/vendor\/|^docs\/[^/]*-preview\.png$|^docs\/evidence\/(?!README\.md$)|(^|\/)\.env(?:\.|$)|\.(?:vrm|vroid|bvh|npy|npz|pt|pth|ckpt|safetensors|sqlite\w*|db|pem|key|mp3|wav|m4a|mp4)$/i;
 for(const file of files){
  if(forbidden.test(file)&&!file.endsWith('.env.example'))errors.push(`Excluded asset in index: ${file}`);

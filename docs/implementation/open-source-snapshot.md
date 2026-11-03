@@ -21,3 +21,5 @@
 分发复核补充：原 `.gitignore` 的 `native/` 同时忽略了 `electron/native/audio-tap.swift` 源文件。现已改为仅忽略根目录 `/native/` 构建产物，并将采集源码纳入公开树；分发检查相应区分原生源码和编译产物。
 
 许可复核：可选 Bailando 研究脚本的采样流程与上游实现有衍生关系，不能统称 MIT。已保留 S-Lab License 1.0 全文、版权和修改说明，并在中英文首页列明该单文件非商业例外；自有主体源码仍为 MIT。
+
+远程核验：公开 main 378 项文件（含许可文本），源码根提交不连接旧私有基线。Node22、Node24 测试/构建与 macOS 原生组件 CI 全通过，公开仓库重新克隆验证通过。打包首次暴露 Electron 45 运行时需显式安装，已加入 `setup:electron` 及工作流步骤；将旧 gh-pages 间接依赖约束到 6.3.0 后重新安装与测试，官方 npm audit 报告 0 漏洞。锁文件下载地址统一为官方 npm registry。
