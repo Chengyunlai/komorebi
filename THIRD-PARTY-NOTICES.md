@@ -10,7 +10,7 @@
 
 ## README 实机演示视频
 
-用户选定的 30 秒演示附件：https://github.com/user-attachments/assets/217548af-7558-4319-9b74-b3ae99c29fe9 。视频为本机实际桌宠窗口与播放声音的录制，未将角色文件或歌曲文件加入源码；附件本身不适用源码 MIT 许可。演示使用 Jessair 的 Cute Model（下文提供来源）与 Black Eyed Peas《Boom Boom Pow》，角色和音乐权利仍归各自权利人。公开视频不构成对角色、音乐或动作素材的再授权。
+用户确认更新的 40 秒演示附件：https://github.com/user-attachments/assets/663b17d3-a19e-47e1-b2c2-a4897273cd81 。视频为本机实际桌宠窗口与播放声音的录制，未将角色文件或歌曲文件加入源码；附件本身不适用源码 MIT 许可。演示使用 Jessair 的 Cute Model（下文提供来源）与 Black Eyed Peas《Boom Boom Pow》，角色和音乐权利仍归各自权利人。公开视频不构成对角色、音乐或动作素材的再授权。
 
 # 第三方来源与许可
 

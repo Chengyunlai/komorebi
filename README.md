@@ -8,9 +8,9 @@
 
 > 当前是面向 macOS Apple Silicon 的源码原型。完整舞蹈、长期稳定性和公开安装包仍在验证；封面为品牌插画，并非应用截图。角色模型需自行导入。
 
-## 实机演示 · 30 秒
+## 实机演示 · 40 秒
 
-https://github.com/user-attachments/assets/217548af-7558-4319-9b74-b3ae99c29fe9
+https://github.com/user-attachments/assets/663b17d3-a19e-47e1-b2c2-a4897273cd81
 
 《Boom Boom Pow》— Black Eyed Peas。歌曲开头的桌宠窗口实录，含实际播放声音，保持原速。演示角色为用户自行导入的 Jessair Cute Model；[角色与音乐权利说明](THIRD-PARTY-NOTICES.md)。
 
