@@ -134,3 +134,27 @@ test('window selection rejects hand-only motion when coordinated body material e
   const player=createFreestyleMotionPlayer(frames,{clips:[{id:'hands',start:0,end:299},{id:'body',start:300,end:599}],segmentSeconds:2})
   for(let i=0;i<600;i++)assert.equal(player.step({dt:1/60,active:true,energy:.5}).clip,1)
 })
+
+test('a new music epoch cancels the outgoing window and releases a frozen pose before fresh entry', async () => {
+ const {createFreestyleMotionPlayer}=await import('../src/motion/freestyle-motion.mjs')
+ const player=createFreestyleMotionPlayer(framesFixture(),{segmentSeconds:.6,crossfadeSeconds:.4})
+ let old
+ for(let i=0;i<50;i++)old=player.step({dt:1/60,active:true,clockEpoch:1,onset:true,onsetStrength:.9})
+ assert.ok(old.switches>0)
+ const release=player.step({dt:1/60,active:true,clockEpoch:2})
+ assert.equal(release.source.primitive,'session-release')
+ assert.equal(release.sourceFrame,null)
+ assert.equal(release.rhythm.pulse,0)
+ const next=player.step({dt:1/60,active:true,clockEpoch:2})
+ assert.deepEqual(next.rotations,release.rotations,'cancelled material no longer advances')
+ assert.ok(next.weight<release.weight)
+ let fresh
+ for(let i=0;i<12;i++)fresh=player.step({dt:1/60,active:true,clockEpoch:2,energy:.2})
+ const reference=createFreestyleMotionPlayer(framesFixture(),{segmentSeconds:.6,crossfadeSeconds:.4})
+ let expected
+ for(let i=0;i<4;i++)expected=reference.step({dt:1/60,active:true,clockEpoch:2,energy:.2})
+ assert.equal(fresh.switches,0)
+ assert.equal(fresh.rhythm.pulse,0)
+ assert.ok(fresh.weight<.3,'new song fades in instead of carrying full weight')
+ assert.ok(Math.abs(fresh.sourceFrame-expected.sourceFrame)<1,'fresh selection and authored rate match a clean player')
+})

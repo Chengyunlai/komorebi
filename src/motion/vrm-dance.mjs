@@ -40,7 +40,7 @@ export class VRMDanceController{
  step({dt=0,signal,signalAge=Infinity,audioMode=false,enabled=true,style='default',preview=false,tempo=100}={}){
  dt=clamp(finite(dt),0,.1);
  const valid=Boolean(signal&&signal.sampleRate>0&&Number.isFinite(signal.sampleFrame)&&signalAge>=0&&signalAge<.35),now=valid?signal.sampleFrame/signal.sampleRate+signalAge:null;
- if(audioMode&&valid&&(signal.streamId!==this.stream||(this.lastTime!==null&&now<this.lastTime-.1))){this.stream=signal.streamId;this.clockEpoch++;this.lastTime=null;this.lastOnset=null;this.eventCount=0;this.correction=0;this.energy=0;this.lastTrustedAt=null;this.director.reset()}
+ if(audioMode&&valid&&(signal.streamId!==this.stream||(this.lastTime!==null&&now<this.lastTime-.1))){const nextEpoch=this.clockEpoch+1,continuity={features:this.features,beat:this.beat};if(this.stream===null)Object.assign(continuity,{bpm:this.bpm,clockReady:this.clockReady});Object.assign(this,new VRMDanceController(),continuity);this.clockEpoch=nextEpoch;this.stream=signal.streamId}
  const blocked=!enabled||style==='stop',available=!blocked&&(audioMode?valid&&!['silent','lost'].includes(signal.state):preview);
  this.energy=Math.max(audioMode&&available?finite(signal.energy):0,this.energy*Math.exp(-dt/.3));
  const audible=Boolean(available&&(!audioMode||this.energy>.025));

@@ -12,6 +12,10 @@
 | 追溯历史决策 | [实现记录](implementation/)（Stage 仅表示当时实验，不等于当前默认行为） |
 | 查看第三方边界 | [第三方说明](../THIRD-PARTY-NOTICES.md) |
 | 查看手裙避让和节奏响应 | [身体约束与音乐时间接口](implementation/garment-clearance-rhythm.md) |
+| 查看切歌动作清理 | [曲目边界、分析与动作会话重置](implementation/music-track-reset.md) |
+| 查看烟花优化与重新录制 | [姿态门控、原生窗口录制及40秒验证](implementation/fireworks-capture-optimization.md) |
+| 查看烟花录像观感问题 | [停顿、手势时机与验收边界](implementation/fireworks-recording-review.md) |
+| 查看音乐烟花 | [音乐重音、手部投影、粒子密度与实机检查](implementation/music-fireworks.md) |
 | 查看节奏感退步修复 | [起音传递与身体重音](implementation/rhythm-onset-delivery.md) |
 | 查看动作连续性修复 | [播放控制、选窗与实机验证](implementation/motion-playback-continuity.md) |
 | 查看公开演示来源 | [GitHub 实机演示视频](implementation/github-demo-video.md) |

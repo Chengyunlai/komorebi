@@ -115,7 +115,14 @@ export function createFreestyleMotionPlayer(frames, {
   let current, position = 0, segmentAge = 0, outgoing = null, transition = 1, lastPose = null
   let segmentIndex = 0, switches = 0, weight = 0, filteredEnergy = .5, rate = 1
   let time=0,lastOnsetTime=-Infinity,impulse=0,pulseEnvelope=0
+  let lastEpoch, release = null
   const recentStarts = []
+  function resetSession(){
+    release ??= lastPose && weight > 0 ? {pose:lastPose,weight} : null
+    current=null;position=0;segmentAge=0;outgoing=null;transition=1;lastPose=null
+    segmentIndex=0;switches=0;weight=0;filteredEnergy=.5;rate=1
+    time=0;lastOnsetTime=-Infinity;impulse=0;pulseEnvelope=0;recentStarts.length=0
+  }
   function chooseStart(currentPose) {
     const target = (.2 + filteredEnergy * .8) * activityScale
     // Cheap window/pose ranking first; signed velocity is evaluated only for finalists.
@@ -131,9 +138,23 @@ export function createFreestyleMotionPlayer(frames, {
     return ranked[0].candidate
   }
   return {
+    reset: resetSession,
     bank: {clips: ranges.map(c => ({...c, beats: null, anchors: [], activity: 1})), beatAligned: false, worldAlignment: 'y-up', rootPolicy: 'motion-matching', execution: 'source-ankle/v1'},
     step({dt = 1 / 60, active: on = false, energy = .5, beat = 0, bpm = null, clockEpoch: epoch, musicReliable=false, musicPhase=null, onset=false, onsetStrength=0, tempoScale=1} = {}) {
       dt = clamp(Number.isFinite(dt) ? dt : 0, 0, .1)
+      if(epoch!==undefined && epoch!==lastEpoch){
+        if(lastEpoch!==undefined)resetSession()
+        lastEpoch=epoch
+      }
+      if(release){
+        release.weight=Math.max(0,release.weight-dt/.18)
+        if(release.weight>0)return {...release.pose,weight:release.weight,clockEpoch:epoch??0,beat,
+          clip:-1,clipBeat:0,sourceFrame:null,support:'double',timing:'estimated',phaseError:0,
+          rhythm:{mode:'session-release',rate:0,pulse:0},transitionPolicy:'session-release',switches:0,
+          blockedTransitions:0,limiter:{mode:'coherent-pose-filter',smoothingSeconds},plan:null,
+          source:{mode:'release',primitive:'session-release',bpm:null}}
+        release=null
+      }
       const inputEnergy = clamp(Number.isFinite(energy) ? energy : .5)
       if (!current) {filteredEnergy = inputEnergy; current = chooseStart(null); position = current.start}
       filteredEnergy += (inputEnergy - filteredEnergy) * decay(dt, .4)

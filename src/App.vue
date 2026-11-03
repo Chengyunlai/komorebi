@@ -2,6 +2,7 @@
 import { computed, ref, reactive, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { Leaf, Plus, ArrowUp, Clipboard, Scan, MessageCircle, BookOpen, ListTodo, Settings2, PanelRightClose, Volume2, VolumeX, Check, X, Search, Copy, Download, Pause, Circle, CircleCheck, AlertCircle, LoaderCircle, FolderOpen, Moon, Pencil, Trash2, ChevronDown, Sparkles, Image, Keyboard, ArrowLeft, RotateCcw } from 'lucide-vue-next'
 import Character from './Character.vue'
+import MusicFireworks from './MusicFireworks.vue'
 import ResultText from './ResultText.vue'
 import MusicLyrics from './MusicLyrics.vue'
 import MusicPanel from './MusicPanel.vue'
@@ -11,6 +12,8 @@ const api = window.komorebi
 const isPet = new URLSearchParams(location.search).get('view') === 'pet'
 const isMusic = new URLSearchParams(location.search).get('view') === 'music'
 const behaviorState=ref({choice:'default',label:'默认律动'})
+const petCharacter=ref(null)
+const readEffectAnchors=()=>petCharacter.value?.getEffectAnchors()
 const audioState=ref({mode:'off',status:'off',signal:null})
 const musicState = ref({status:'idle',title:'',artist:'',lines:[],position:0,rate:0,observedAt:Date.now()})
 const isChat = new URLSearchParams(location.search).get('view') === 'chat'
@@ -150,12 +153,13 @@ onBeforeUnmount(()=>{disposers.forEach(fn=>fn());clearTimeout(toastTimer);clearT
 
 <template>
   <div v-if="isPet" class="pet-only" :class="{'with-music':Boolean(musicState.title)||audioState.mode==='demo'}">
+    <MusicFireworks :read-anchors="readEffectAnchors" :audio="audioState" :enabled="state.settings.musicDance ?? true"/>
     <div v-if="petText" class="pet-bubble" role="status" @click="api.showChat(true)"><span class="tiny-dot" :class="{busy:active}" />{{petText}}</div>
     <div class="pet-interaction" title="拖动移动 · 点击对话 · 右键菜单"
       @pointerdown="startPetDrag" @pointermove="movePet" @pointerup="finishPetDrag($event)"
       @pointercancel="finishPetDrag($event,true)" @lostpointercapture="finishPetDrag($event,true)"
       @contextmenu.prevent="api.petMenu()">
-      <Character :active="Boolean(active)" :pet="true" :music="musicState" :audio="audioState" :behavior="behaviorState" :dance-enabled="state.settings.musicDance ?? true" :tempo="state.settings.musicTempo||100" />
+      <Character ref="petCharacter" :active="Boolean(active)" :pet="true" :music="musicState" :audio="audioState" :behavior="behaviorState" :dance-enabled="state.settings.musicDance ?? true" :tempo="state.settings.musicTempo||100" />
     </div>
     <MusicLyrics :audio="audioState" :music="musicState" :enabled="state.settings.musicLyrics ?? true"/>
   </div>

@@ -14,6 +14,7 @@ const { routeSubmission } = require('./submission.cjs');
 const { BehaviorDirector } = require('./behavior.cjs');
 const behavior = new BehaviorDirector();
 const { MusicAudio } = require('./music-audio.cjs');
+const {createMusicTrackBoundary}=require('./music-track-boundary.cjs');
 const { DanceStream } = require('./dance-stream.cjs');
 const { loadDanceLibrary } = require('./dance-library.cjs');
 const { DEFAULT_BASE_URL, DEFAULT_MODEL, validateLlmConfig } = require('./llm.cjs');
@@ -171,7 +172,12 @@ function showMusic() {
   musicPanel.show();musicPanel.focus();
 }
 let lastMusicStatus='idle';
+const trackChanged=createMusicTrackBoundary();
 function musicChanged(state) {
+  if(trackChanged(state)) {
+    musicAudio?.resetTrack();
+    if(danceStream?.running)danceStream.stop();
+  }
   // Auto-follow: whenever NetEase starts playing and audio capture is off, start it.
   if(state.status==='playing'&&lastMusicStatus!=='playing'&&musicAudio?.state.mode==='off'&&store.setting('musicEnabled',true))musicAudio.start('netease').catch(()=>{});
   // Stop capturing when playback stops so we never keep the tap open silently.
