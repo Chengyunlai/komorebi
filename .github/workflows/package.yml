@@ -27,7 +27,7 @@ jobs:
       - run: npm run package:mac
       - name: Preserve application symlinks and permissions
         run: ditto -c -k --sequesterRsrc --keepParent release/Komorebi.app release/Komorebi-macOS-arm64-prototype.zip
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: Komorebi-macOS-arm64-prototype
           path: release/Komorebi-macOS-arm64-prototype.zip
