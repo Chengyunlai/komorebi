@@ -14,4 +14,10 @@ Actions 继续 SHA 固定、独立升级，不启用自动合并。CI 验证测�
 
 事实：原 PR #4 在 npm ci 阶段失败，unsafe-eval 7 要求 core 7，而 Live2D 0.4 的 loaders/sprite 要求 core 6。原 PR #1–#3 CI 通过，但基于早期 main，且 CI 未执行 Electron 安装、启动或打包上传。
 
-本轮执行结果随验证补充。任何依赖检查结果均不代表 M1/M2 舞蹈或 M3 长期桌面体验验收；已选定的 30 秒演示继续作为当前观感参考。
+本轮已将原开发组 [#3](https://github.com/Chengyunlai/komorebi/pull/3) 拆为 [Electron #7](https://github.com/Chengyunlai/komorebi/pull/7)、[Vite #8](https://github.com/Chengyunlai/komorebi/pull/8)；原运行组 [#4](https://github.com/Chengyunlai/komorebi/pull/4) 拆为[图标 #9](https://github.com/Chengyunlai/komorebi/pull/9)、[Three.js #10](https://github.com/Chengyunlai/komorebi/pull/10)。Pixi 迁移见看板 MAINT-02。
+
+本机隔离安装：Electron 45.2.1、Vite 8.3.5、Three.js 0.187.0 分别通过 238 项测试（237 通过、1 项缺少未分发日和素材而跳过）及渲染器构建。音乐桥与音频组件编译通过；隔离目录需指定独立 TMPDIR，避免原生构建脚本共用 CMake 缓存产生源路径冲突。
+
+实机短时验证：每项在独立数据目录中启动 Electron，检查透明置顶窗口、VRM、本机动作库加载、原创节奏信号 active/tracking→off，无渲染/预加载错误；Vite 8 另完成 macOS 打包，并从打包后的 Resources/app 加载运行。音频 demo 静音，不改变用户正在播放的音乐；未据此声明系统采集权限或长期运行验收。角色、动作、截图和私有数据均未入库。
+
+任何依赖检查结果均不代表 M1/M2 舞蹈或 M3 长期桌面体验验收；已选定的 30 秒演示继续作为当前观感参考。
