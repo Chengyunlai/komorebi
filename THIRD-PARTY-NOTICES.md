@@ -14,7 +14,7 @@
 
 ## 内置默认角色：千驮谷筱 / Sendagaya Shino
 
-由 pixiv Inc. / VRoid Project 提供，官方明确采用 CC0 1.0，可修改和再分发。官方许可依据：https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino 。仅此经过核验的 VRM 随源码及应用包提供，资源、CC0 全文与具体文件来源见 [assets/avatars/sendagaya-shino](assets/avatars/sendagaya-shino/)。从 madjin/vrm-samples 固定提交获取，保留原始文件及内嵌 CC0 元数据，未作转换或重新标注 MIT；不是木漏日原创或独占角色，也不暗示 pixiv 为本项目背书。用户自行导入的其他角色仍留在本机。
+由 pixiv Inc. / VRoid Project 提供，官方明确采用 CC0 1.0，可修改和再分发。官方许可依据：https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino 。仅此经过核验的 VRM 随源码及应用包提供，资源、CC0 全文与具体文件来源见 [assets/avatars/sendagaya-shino](assets/avatars/sendagaya-shino/)。从 madjin/vrm-samples 固定提交获取，保留原始文件及内嵌 CC0 元数据，未作转换或重新标注 MIT；不是木漏日原创或独占角色，也不暗示 pixiv 为本项目背书。用户自行导入的其他角色仍留在本机。文档中的千驮谷筱正面/斜侧面参考图由同一内置 CC0 模型渲染，角色许可不变，来源及生成说明见[文档配图说明](docs/assets/README.md)。
 
 # 第三方来源与许可
 

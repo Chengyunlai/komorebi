@@ -1,5 +1,7 @@
 # Sendagaya Shino / 千驮谷筱
 
+[Avatar reference and gallery](../../../docs/avatars.en.md) · [中文角色图鉴](../../../docs/avatars.md) · [Setup](../../../docs/avatar-setup.md) · [Project home](../../../README.md)
+
 Default avatar for Komorebi. Original character/model by **pixiv Inc. / VRoid Project**, dedicated under **CC0 1.0**. This is an existing third-party character, not an original or exclusive Komorebi character. No endorsement by pixiv is implied.
 
 - Official character and license: https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino

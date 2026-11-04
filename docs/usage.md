@@ -2,7 +2,7 @@
 
 从 [README](../README.md) 完成源码构建后，首次启动即显示内置千驮谷筱（pixiv，CC0）；已有导入角色优先使用。以托盘“配置与管理”为入口选择项目、设置任务后端或更换 VRM。
 
-需要其他角色时，可在偏好设置导入，或退出应用后运行 `npm run setup:avatar -- "/absolute/path/to/model.vrm"`。换回内置角色用 `npm run setup:avatar -- --default --replace`。旧演示中的 Jessair Cute Model 禁止再分发，仍须用户自行获取。完整步骤及 AI 安装约定见[角色安装](avatar-setup.md)。
+需要其他角色时，可在偏好设置导入，或退出应用后运行 `npm run setup:avatar -- "/absolute/path/to/model.vrm"`。换回内置角色用 `npm run setup:avatar -- --default --replace`。旧演示中的 Jessair Cute Model 禁止再分发，仍须用户自行获取。外观、官方下载与许可对照见[角色图鉴](avatars.md)；完整步骤及 AI 安装约定见[角色安装](avatar-setup.md)。
 
 ## 交互
 

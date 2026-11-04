@@ -2,16 +2,19 @@
 
 面向使用者：[中文介绍](../README.md) · [English](../README.en.md) · [使用与配置](usage.md)。
 
-角色：[内置千驮谷筱、更换命令与 AI 安装约定](avatar-setup.md)；[默认角色接入与验收](implementation/default-avatar.md)、[安装器实现](implementation/avatar-setup.md)。
+角色：[图鉴、来源与许可对照](avatars.md) · [English avatar guide](avatars.en.md) · [更换命令与 AI 安装约定](avatar-setup.md)；[默认角色接入与验收](implementation/default-avatar.md)、[安装器实现](implementation/avatar-setup.md)。
 
 面向贡献者：[贡献指南](../CONTRIBUTING.md) → [当前上下文](context.md) → [可运行示例](../examples/README.md)。
 
 | 目的 | 入口 |
 | --- | --- |
+| 选择角色、查看图片与官方下载 | [角色参考与资源导航](avatars.md) |
+| 安装、更换或恢复内置角色 | [角色安装](avatar-setup.md) |
 | 看当前优先级与验收 | [项目管理](project/README.md)、[看板](project/BACKLOG.md)、[里程碑](project/MILESTONES.md) |
 | 理解音乐/身体/舞蹈职责 | [知识黑板](design/music-dance-blackboard.md) → [工程依赖](design/music-dance-engineering.md) |
 | 理解声音陪伴方向 | [声音响应设计](design/sound-reactive-companion.md) |
 | 追溯历史决策 | [实现记录](implementation/)（Stage 仅表示当时实验，不等于当前默认行为） |
+| 查看导航与配图的维护依据 | [角色参考资料与验证记录](implementation/avatar-reference-navigation.md) |
 | 查看第三方边界 | [第三方说明](../THIRD-PARTY-NOTICES.md) |
 | 查看手裙避让和节奏响应 | [身体约束与音乐时间接口](implementation/garment-clearance-rhythm.md) |
 | 查看切歌动作清理 | [曲目边界、分析与动作会话重置](implementation/music-track-reset.md) |

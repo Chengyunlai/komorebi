@@ -1,5 +1,7 @@
 # 默认角色与更换角色
 
+[角色图片、官方来源与许可对照](avatars.md) · [使用与配置](usage.md) · [项目首页](../README.md)
+
 Komorebi 已内置 **千驮谷筱 / Sendagaya Shino**（pixiv / VRoid Project，CC0）。首次启动无需登录、下载或导入；模型随源码及应用包提供，运行时不访问下载服务。来源与完整许可见[角色资源目录](../assets/avatars/sendagaya-shino/)。
 
 已有 `local-models/Cute_Model.vrm` 的用户继续使用其自行导入角色；此固定文件名是历史兼容路径，不要求角色名为 Cute Model。

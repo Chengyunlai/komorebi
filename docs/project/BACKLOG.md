@@ -26,6 +26,7 @@
 | APP-04 | P1 | 日常动作碎抖与连续性 | 待验收 | 保留素材边界、整窗身体参与筛选、移动过渡、去能量角度缩放、全身/踝目标短时过滤；实机约23→60FPS，控制器速度变化P95约降88%；整段观感待用户确认，见[记录](../implementation/motion-playback-continuity.md) |
 | RELEASE-01 | P2 | 开源与素材许可审核 | 完成（源码范围） | [公开仓库](https://github.com/Chengyunlai/komorebi) 已建立；中英 README、配图、贡献指南、CI；素材隔离，Bailando 研究单文件 S-Lab 例外明示；Node22/24 和 macOS 原生 CI 已通过，公证发行仍独立待验收 |
 | INSTALL-01 | P1 | 首次安装角色指引与命令 | 完成（源码范围） | 问题：安装 AI 缺少角色下载位置与操作。交付：作者 BOOTH 链接、中英 README/AGENTS 约定、`setup:avatar` 本机校验安装；依赖用户登录下载授权 VRM。256测试/构建通过、真实本机模型临时目录安装字节一致；新设备首次下载及显示仍待验收，见[记录](../implementation/avatar-setup.md) |
+| DOCS-01 | P2 | 项目导航与角色参考资料 | 完成 | 用户需要便于查阅的项目/角色导航；中英首页与角色图鉴、双视图、来源/许可/下载对照和导入问题说明；依赖内置 CC0 模型及官方资料。127处本地路径与浏览器图片/英文入口验证通过；可选角色未追加实测，见[记录](../implementation/avatar-reference-navigation.md) |
 | INSTALL-02 | P1 | 内置可分发默认角色 | 完成（本机测试包） | 用户选定千驮谷筱；CC0 来源/内嵌元数据/固定哈希，源码与包内置、已有导入优先；257测试/构建及打包通过，全新用户目录实机显示/待机/点击对话通过；跨设备和公证发行仍待验收，见[记录](../implementation/default-avatar.md) |
 | SOUND-01 | P1 | 全系统输出采集 | 完成 | 已验收：用户实际运行点击「系统声音跟拍」，桌宠随播放的测试音乐律动，静音收势；CLI 实测任意应用出声产生特征流、网易云回归、187测试与构建通过；见[stage-27](../implementation/stage-27-system-sound-capture.md) |
 | SOUND-02 | P1 | 麦克风采集与权限 | 待办 | 依赖 SOUND-01 特征管线；房间声音进入同一特征流；权限失败路径可执行断言 |

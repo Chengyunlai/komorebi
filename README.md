@@ -8,6 +8,8 @@
 
 > 当前是面向 macOS Apple Silicon 的源码原型。完整舞蹈、长期稳定性和公开安装包仍在验证；封面为品牌插画，并非应用截图。已内置 CC0 角色千驮谷筱，也支持导入自己的 VRM。
 
+<p align="center"><a href="#从源码启动">安装启动</a> · <a href="docs/usage.md">使用与配置</a> · <a href="docs/avatars.md">角色图鉴</a> · <a href="docs/avatar-setup.md">更换角色</a> · <a href="docs/README.md">文档导航</a> · <a href="https://github.com/Chengyunlai/komorebi/issues">问题反馈</a></p>
+
 ## 实机演示 · 40 秒
 
 https://github.com/user-attachments/assets/663b17d3-a19e-47e1-b2c2-a4897273cd81
@@ -46,6 +48,12 @@ npm start
 ## 默认角色与更换角色（也适用于 AI 辅助安装）
 
 默认使用 **千驮谷筱 / Sendagaya Shino**，由 pixiv / VRoid Project 提供，采用 [CC0](https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino)，随源码和应用包提供，启动不需登录或联网下载。已有用户导入的角色仍优先使用。来源、校验和及许可保存在 [角色资源目录](assets/avatars/sendagaya-shino/)。
+
+<p align="center"><a href="docs/avatars.md"><img src="docs/assets/shino-front.png" width="230" alt="内置角色千驮谷筱的全身静态参考渲染，点击查看角色图鉴"></a></p>
+
+<p align="center">千驮谷筱 · pixiv / VRoid Project · CC0<br>模型静态参考渲染，非应用截图；<a href="docs/assets/README.md">图片来源</a></p>
+
+想看看外观、挑选其他免费角色，或确认角色能否随应用分发，请查看[角色图鉴与资源导航](docs/avatars.md)。其中包含官方预览、下载入口、作者、许可、兼容状态及常见问题。
 
 需要更换角色时，退出 Komorebi，在本项目目录运行：
 

@@ -7,6 +7,8 @@ A lightweight desktop companion prototype. Keep a character beside your work, cl
 
 > Source prototype for macOS Apple Silicon. Full dance quality, long-running stability and public installers remain under evaluation. The cover is a brand illustration, not an app screenshot. Includes Sendagaya Shino (CC0); custom licensed VRM avatars are supported.
 
+<p align="center"><a href="#run-from-source">Install</a> · <a href="docs/usage.md">Usage (中文)</a> · <a href="docs/avatars.en.md">Avatar guide</a> · <a href="docs/avatar-setup.md">Change avatar (中文)</a> · <a href="docs/README.md">Docs</a> · <a href="https://github.com/Chengyunlai/komorebi/issues">Report an issue</a></p>
+
 ## Live demo · 40 seconds
 
 https://github.com/user-attachments/assets/663b17d3-a19e-47e1-b2c2-a4897273cd81
@@ -45,6 +47,12 @@ Task analysis needs an installed, authenticated standalone Codex CLI, or a user-
 ## Default avatar and custom imports (including AI-assisted setup)
 
 **Sendagaya Shino**, by pixiv / VRoid Project, is bundled under [CC0](https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino). No login or runtime download is required. Existing user-imported avatars retain priority. See the [asset directory](assets/avatars/sendagaya-shino/) for provenance, checksum and license.
+
+<p align="center"><a href="docs/avatars.en.md"><img src="docs/assets/shino-front.png" width="230" alt="Full-body static reference render of the included Sendagaya Shino avatar; open the avatar guide"></a></p>
+
+<p align="center">Sendagaya Shino · pixiv / VRoid Project · CC0<br>Static model reference, not an app screenshot. <a href="docs/assets/README.md">Image provenance</a>.</p>
+
+The [avatar guide and resource directory](docs/avatars.en.md) includes appearance references, official previews, download pages, authors, redistribution terms and compatibility notes.
 
 To import another licensed avatar, quit Komorebi and run from the project directory:
 
