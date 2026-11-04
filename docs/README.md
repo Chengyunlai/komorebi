@@ -14,6 +14,7 @@
 | 理解音乐/身体/舞蹈职责 | [知识黑板](design/music-dance-blackboard.md) → [工程依赖](design/music-dance-engineering.md) |
 | 理解声音陪伴方向 | [声音响应设计](design/sound-reactive-companion.md) |
 | 追溯历史决策 | [实现记录](implementation/)（Stage 仅表示当时实验，不等于当前默认行为） |
+| 排查角色发虚、截图选区被遮挡 | [渲染像素比与截图层级修复](implementation/character-resolution-capture.md) |
 | 查看导航与配图的维护依据 | [角色参考资料与验证记录](implementation/avatar-reference-navigation.md) |
 | 查看第三方边界 | [第三方说明](../THIRD-PARTY-NOTICES.md) |
 | 查看手裙避让和节奏响应 | [身体约束与音乐时间接口](implementation/garment-clearance-rhythm.md) |

@@ -15,6 +15,7 @@ const { BehaviorDirector } = require('./behavior.cjs');
 const behavior = new BehaviorDirector();
 const { MusicAudio } = require('./music-audio.cjs');
 const {createMusicTrackBoundary}=require('./music-track-boundary.cjs');
+const {createCaptureVisibility}=require('./capture-visibility.cjs');
 const { DanceStream } = require('./dance-stream.cjs');
 const { loadDanceLibrary } = require('./dance-library.cjs');
 const { DEFAULT_BASE_URL, DEFAULT_MODEL, validateLlmConfig } = require('./llm.cjs');
@@ -27,7 +28,8 @@ let petDrag = null, chatHeight = 128, chatTail = 'right';
 let motionDiagnostics={streamId:null,samples:[]};
 let motionLab, motionStudySamples=[],idleSamples=[];
 let music, musicAudio, musicPanel, danceStream, petHeight = 440;
-let board, pet, chat, tray, store, runner, quitting = false, captureBusy = false, speechProcess = null, speechController = null, sleepMode = false;
+let board, pet, chat, tray, store, runner, quitting = false, captureBusy = false, speechProcess = null, speechController = null, sleepMode = false, screenLocked = false;
+const captureVisibility=createCaptureVisibility({windows:()=>[board,pet,chat,musicPanel,motionLab],canRestore:window=>!quitting&&!screenLocked&&(![pet,chat,musicPanel].includes(window)||store.setting('petVisible',true))});
 const root = path.join(__dirname, '..');
 const captures = () => path.join(app.getPath('userData'), 'captures');
 const safeAttachment = input => {
@@ -41,6 +43,7 @@ function send(channel, value) {
 }
 function broadcast() { send('snapshot', store.snapshot()); }
 function showBoard() {
+  if(captureVisibility.active)return;
   if (!board) createBoard();
   board.show(); board.focus();
 }
@@ -57,12 +60,13 @@ function createBoard() {
   board.on('close', event => { if (!quitting) { event.preventDefault(); board.hide(); } });
 }
 function showMotionLab(){
+  if(captureVisibility.active)return;
   if(!motionLab){
     const area=screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea;
     const width=Math.min(1240,area.width-40),height=Math.min(860,area.height-40);
     motionLab=new BrowserWindow({title:'木漏日 · 动作解剖',width,height,x:Math.round(area.x+(area.width-width)/2),y:Math.round(area.y+(area.height-height)/2),minWidth:Math.min(1000,width),minHeight:Math.min(700,height),show:false,backgroundColor:'#f6f7f9',webPreferences:{preload:path.join(__dirname,'preload.cjs'),contextIsolation:true,nodeIntegration:false,sandbox:true,backgroundThrottling:false}});
     lockWindow(motionLab);motionLab.loadFile(path.join(root,'dist/index.html'),{query:{view:'motion-lab'}});
-    motionLab.once('ready-to-show',()=>{console.log('[ML] ready-to-show');motionLab.show();motionLab.focus();});motionLab.webContents.once('did-finish-load',()=>{console.log('[ML] did-finish-load visible',motionLab.isVisible());if(!motionLab.isVisible())motionLab.show();});motionLab.on('closed',()=>motionLab=null);
+    motionLab.once('ready-to-show',()=>{console.log('[ML] ready-to-show');if(captureVisibility.active)return;motionLab.show();motionLab.focus();});motionLab.webContents.once('did-finish-load',()=>{console.log('[ML] did-finish-load visible',motionLab.isVisible());if(!captureVisibility.active&&!motionLab.isVisible())motionLab.show();});motionLab.on('closed',()=>motionLab=null);
   }else{motionLab.show();motionLab.focus();}
 }
 function positionPet(initial = false) {
@@ -80,7 +84,7 @@ function positionPet(initial = false) {
   if (Object.keys(next).some(key => current[key] !== next[key])) pet.setBounds(next);
 }
 function keepAboveDesktop(window) {
-  window.setAlwaysOnTop(true, 'screen-saver');
+  window.setAlwaysOnTop(true, 'floating');
   if (process.platform === 'darwin') window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 }
 function createPet() {
@@ -142,6 +146,7 @@ function positionChat() {
   chat.webContents.send('komorebi:chat-side', chatTail);
 }
 function showChat(revealResult = false) {
+  if(captureVisibility.active)return;
   setPetVisible(true); positionChat(); chat.show(); chat.focus();
   chat.webContents.send('komorebi:chat-open', { revealResult: revealResult === true, tail: chatTail });
 }
@@ -158,6 +163,7 @@ function createChat() {
   });
 }
 function showMusic() {
+  if(captureVisibility.active)return;
   setPetVisible(true);
   if (!musicPanel) {
     musicPanel = new BrowserWindow({ title:'木漏日 · 网易云音乐',width:330,height:460,show:false,frame:false,resizable:false,transparent:true,backgroundColor:'#00000000',hasShadow:false,skipTaskbar:true,alwaysOnTop:true,
@@ -206,7 +212,7 @@ async function handoffCapture() {
 }
 function setPetVisible(visible) {
   store.setSetting('petVisible', Boolean(visible));
-  if (visible) pet.showInactive(); else { endPetDrag(); pet.hide(); chat?.hide(); musicPanel?.hide(); }
+  if (visible) {if(!captureVisibility.active)pet.showInactive();} else { endPetDrag(); pet.hide(); chat?.hide(); musicPanel?.hide(); }
   broadcast();
 }
 function petMessage(text) { send('pet-message', text); }
@@ -279,9 +285,8 @@ async function captureRegion() {
   if (process.platform !== 'darwin') throw new Error('当前框选入口适用于 macOS；其他平台可以先复制截图。');
   if (systemPreferences.getMediaAccessStatus('screen') !== 'granted') throw new Error('框选需要在系统设置中允许木漏日录制屏幕。也可以先用系统截图，再从剪贴板交办。');
   captureBusy = true;
-  const wasPetVisible = pet.isVisible();
-  const wasBoardVisible = board.isVisible(), wasChatVisible = chat.isVisible();
-  board.hide(); chat.hide(); pet.hide();
+  endPetDrag();
+  const restoreWindows=captureVisibility.acquire();
   const file = path.join(captures(), `${randomUUID()}.png`);
   try {
     await new Promise(resolve => setTimeout(resolve, 220));
@@ -295,7 +300,7 @@ async function captureRegion() {
     if (error.code === 1) return null;
     throw new Error('截图未完成。请在系统设置中允许屏幕录制，然后重试。');
   } finally {
-    captureBusy = false; if (wasBoardVisible) board.show(); if (wasPetVisible) pet.showInactive(); if (wasChatVisible) { positionChat(); chat.show(); }
+    captureBusy = false;restoreWindows();
   }
 }
 function findCodex() {
@@ -556,9 +561,9 @@ app.whenReady().then(() => {
   globalShortcut.register('Alt+Shift+H', () => setPetVisible(!pet.isVisible()));
   screen.on('display-removed',() => { positionPet(); positionChat(); });
   screen.on('display-metrics-changed',() => { positionPet(); positionChat(); });
-  powerMonitor.on('lock-screen',() => {sleepMode=pet.isVisible();pet.hide();chat.hide();musicPanel?.hide();musicAudio?.stop();stopSpeech();});
-  powerMonitor.on('unlock-screen',() => {if(sleepMode && store.setting('petVisible',true))pet.showInactive();});
-  app.on('activate',() => {if(![board,chat,musicPanel,motionLab].some(window=>window?.isVisible()))setPetVisible(true);});
+  powerMonitor.on('lock-screen',() => {screenLocked=true;sleepMode=pet.isVisible()||(captureVisibility.active&&store.setting('petVisible',true));pet.hide();chat.hide();musicPanel?.hide();musicAudio?.stop();stopSpeech();});
+  powerMonitor.on('unlock-screen',() => {screenLocked=false;if(sleepMode&&!captureVisibility.active&&store.setting('petVisible',true))pet.showInactive();});
+  app.on('activate',() => {if(!captureVisibility.active&&![board,chat,musicPanel,motionLab].some(window=>window?.isVisible()))setPetVisible(true);});
   // Explicit developer smoke-test commands for an already running pet.
   app.on('second-instance',(_event,args) => {
     if(args.includes('--music-demo'))musicAudio.start('demo').catch(console.error);
@@ -568,7 +573,7 @@ app.whenReady().then(() => {
   });
   if(process.argv.includes('--motion-lab'))showMotionLab();
 }).catch(error => { dialog.showErrorBox('木漏日未能启动',error.message); app.quit(); });
-app.on('before-quit',() => { quitting=true; endPetDrag(); music?.stop(); musicAudio?.stop(); danceStream?.stop(); runner?.shutdown(); stopSpeech(); });
+app.on('before-quit',() => { quitting=true;endPetDrag(); music?.stop(); musicAudio?.stop(); danceStream?.stop(); runner?.shutdown(); stopSpeech(); });
 app.on('will-quit',() => { globalShortcut.unregisterAll();store?.close(); });
 app.on('window-all-closed',() => {});
 

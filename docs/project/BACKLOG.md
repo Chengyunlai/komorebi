@@ -22,6 +22,7 @@
 | APP-05 | P1 | 手裙穿模与音乐响应 | 待验收 | 主要裙摆骨代理体避让；修正后备100/120降速、移除默认60ms输出滞后、缩短交叠；材料周期/音乐相位修正与低置信起音响应；本机采样3073姿态约束残留≤2mm；真实服装/音乐观感待验收，见[记录](../implementation/garment-clearance-rhythm.md) |
 | APP-06 | P1 | Boom 节奏感退步 | 待验收 | 起音强度跨批次保留、弱响应包络修复及身体重音恢复；241测试/构建通过，用户同意上传本轮候选与40秒演示，精准踩拍仍待验收，见[记录](../implementation/rhythm-onset-delivery.md) |
 | APP-07 | P1 | 稀疏音乐烟花 | 待验收 | 录制缺口定位至本机screencast路径，已改原生窗口录制；抬手/伸展门控、短促亮尾与缓存柔光；254测试/构建通过，40秒新录像原始最大间隔33ms、rAF最大18ms、4次手部烟花，整段炫感待用户确认；见[优化与新录像](../implementation/fireworks-capture-optimization.md) |
+| APP-09 | P1 | 角色清晰度与截图遮挡 | 待验收 | DPR动态同步、桌宠2–3倍采样，普通floating置顶且第三方截图保留角色；自带框选统一窗口恢复。260测试/构建/测试包通过，实际Canvas580×712、macOS层级3；具体第三方截图编辑体验待确认，见[记录](../implementation/character-resolution-capture.md) |
 | APP-08 | P1 | 切歌取消旧动作 | 待验收 | 曲目变化重置分析历史/epoch，取消旧动作窗口并短收势后重新选段；253测试与构建通过、实机切歌新选窗，新版已载入，修复后40秒录像重录完成，快速连切观感待确认；见[记录](../implementation/music-track-reset.md) |
 | APP-04 | P1 | 日常动作碎抖与连续性 | 待验收 | 保留素材边界、整窗身体参与筛选、移动过渡、去能量角度缩放、全身/踝目标短时过滤；实机约23→60FPS，控制器速度变化P95约降88%；整段观感待用户确认，见[记录](../implementation/motion-playback-continuity.md) |
 | RELEASE-01 | P2 | 开源与素材许可审核 | 完成（源码范围） | [公开仓库](https://github.com/Chengyunlai/komorebi) 已建立；中英 README、配图、贡献指南、CI；素材隔离，Bailando 研究单文件 S-Lab 例外明示；Node22/24 和 macOS 原生 CI 已通过，公证发行仍独立待验收 |
