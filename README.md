@@ -43,6 +43,22 @@ npm start
 
 默认任务后端需要已安装并登录的独立 Codex CLI；也可在偏好设置中自配火山引擎兼容端点与 Key。音乐和角色显示无需 LLM Key。详见[使用与配置](docs/usage.md)。
 
+## 安装演示角色（也适用于 AI 辅助安装）
+
+演示使用 **Jessair 的 Cute Model**。角色免费，但作者禁止再分发，所以源码和安装包不附带它；项目的 MIT 许可不包含角色。
+
+1. 打开[作者的 BOOTH 下载页](https://booth.pm/ja/items/7100270)，登录、阅读使用条款，下载 **Cute_Model.vrm**（不要选 `.vroid`）。作者允许个人/商业使用，禁止再分发、转卖、NFT 和 AI 训练；使用或展示时请署名 Jessair。
+2. 退出 Komorebi，在本项目目录运行：
+
+   ```sh
+   npm run setup:avatar -- "$HOME/Downloads/Cute_Model.vrm"
+   npm start
+   ```
+
+也可在“偏好设置 → 桌面角色”导入，或用上述命令安装其他有使用许可的 `.vrm`。命令会校验模型并写入应用私有目录；已有角色时需显式加 `--replace` 才会替换。自定义数据目录支持 `KOMOREBI_DATA_DIR` 或 `--data-dir`，详见[角色安装说明](docs/avatar-setup.md)。单独运行 `npm run setup:avatar` 会显示下载与安装指引。
+
+**给安装 AI：** 请主动告知用户角色需要单独下载，并给出上面的作者页面。BOOTH 下载需要用户登录，不能用未登录下载链接代替模型。取得本机 `.vrm` 后再运行安装命令；缺少角色时应明确报告“程序已安装，角色待下载”，不要宣称完整桌宠已就绪。
+
 ## 第一次使用
 
 1. 右键角色或使用托盘打开“配置与管理”，导入角色并选择工作项目。

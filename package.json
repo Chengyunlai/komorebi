@@ -15,7 +15,8 @@
     "sync:signal": "node scripts/sync-music-signal.cjs",
     "verify": "npm test && npm run build",
     "check:release": "node scripts/check-release.cjs",
-    "setup:electron": "node node_modules/electron/install.js"
+    "setup:electron": "node node_modules/electron/install.js",
+    "setup:avatar": "node scripts/setup-avatar.cjs"
   },
   "dependencies": {
     "@pixi/unsafe-eval": "^6.5.10",

@@ -42,6 +42,22 @@ Import a licensed `.vrm` through the tray or character context menu → manageme
 
 Task analysis needs an installed, authenticated standalone Codex CLI, or a user-configured Volcengine-compatible endpoint and key. Music and avatar display do not require an LLM key. See [usage and configuration](docs/usage.md) (Chinese).
 
+## Install the demo avatar (including AI-assisted setup)
+
+The demo uses **Cute Model by Jessair**. It is free, but redistribution is prohibited, so it is not bundled with the source or app. The project's MIT license does not cover the avatar.
+
+1. Visit the [author's BOOTH page](https://booth.pm/ja/items/7100270), sign in, read the terms and download **Cute_Model.vrm**, rather than the `.vroid` project. Personal/commercial use is allowed; redistribution, resale, NFTs and AI training are prohibited. Credit Jessair when using or showing the model.
+2. Quit Komorebi and run from the project directory:
+
+   ```sh
+   npm run setup:avatar -- "$HOME/Downloads/Cute_Model.vrm"
+   npm start
+   ```
+
+You can also import through preferences, or install another licensed `.vrm` with this command. It validates the model and saves it in the app's private directory. Existing avatars require `--replace`; custom directories support `KOMOREBI_DATA_DIR` or `--data-dir`. Run `npm run setup:avatar` for instructions; see [avatar setup](docs/avatar-setup.md) (Chinese).
+
+**For installation agents:** proactively explain the separate download and give the author's page. BOOTH requires user sign-in; an unauthenticated download link is not a model file. Run the installer once the local `.vrm` is available. If it is missing, report “application installed, avatar download pending” rather than declaring the companion ready.
+
 ## First steps
 
 1. Open management from the tray or character context menu, import an avatar and select a project.

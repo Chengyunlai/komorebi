@@ -2,6 +2,8 @@
 
 面向使用者：[中文介绍](../README.md) · [English](../README.en.md) · [使用与配置](usage.md)。
 
+首次安装角色：[作者下载位置、命令与 AI 安装约定](avatar-setup.md)；[安装器实现与验证](implementation/avatar-setup.md)。
+
 面向贡献者：[贡献指南](../CONTRIBUTING.md) → [当前上下文](context.md) → [可运行示例](../examples/README.md)。
 
 | 目的 | 入口 |

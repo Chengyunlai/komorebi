@@ -2,6 +2,8 @@
 
 从 [README](../README.md) 完成源码构建后，以托盘“配置与管理”为入口导入 VRM、选择项目、设置任务后端。没有角色素材时角色区域会提示导入，托盘仍可打开管理窗口。
 
+演示角色可从 [Jessair 的 BOOTH 页面](https://booth.pm/ja/items/7100270)免费取得，需登录并下载 `Cute_Model.vrm`；角色禁止再分发，因此未附带。下载后退出应用，运行 `npm run setup:avatar -- "$HOME/Downloads/Cute_Model.vrm"` 并重新启动，或使用偏好设置导入。其他授权 VRM 也可使用。完整步骤及 AI 安装约定见[角色安装](avatar-setup.md)。
+
 ## 交互
 
 单击角色展开气泡，按住拖动，右键打开菜单。Enter 发送、Shift+Enter 换行、Esc 收起。点击气泡外默认自动收起，草稿保留，任务继续；可在偏好设置关闭。Option+Space 带入剪贴板，Option+Shift+S 框选截图，Option+Shift+H 显示/隐藏伙伴。快捷键冲突与截图权限依设备设置处理。
