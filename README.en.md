@@ -5,7 +5,7 @@
 
 A lightweight desktop companion prototype. Keep a character beside your work, click to ask a question, and let it respond to music with movement and lyrics.
 
-> Source prototype for macOS Apple Silicon. Full dance quality, long-running stability and public installers remain under evaluation. The cover is a brand illustration, not an app screenshot. Bring your own licensed VRM avatar.
+> Source prototype for macOS Apple Silicon. Full dance quality, long-running stability and public installers remain under evaluation. The cover is a brand illustration, not an app screenshot. Includes Sendagaya Shino (CC0); custom licensed VRM avatars are supported.
 
 ## Live demo · 40 seconds
 
@@ -38,29 +38,28 @@ npm run build
 npm start
 ```
 
-Import a licensed `.vrm` through the tray or character context menu → management → preferences → avatar. No character models, research dances, model weights, music or real lyrics are bundled. Skip the two native `build:*` commands to try the character and task interface without music capture.
+**Sendagaya Shino (pixiv, CC0)** is bundled with the source and app, ready on first launch. You can import another licensed `.vrm` through management → preferences → avatar. Research dances, model weights, music and real lyrics are not bundled. Skip the two native `build:*` commands to try the character and task interface without music capture.
 
 Task analysis needs an installed, authenticated standalone Codex CLI, or a user-configured Volcengine-compatible endpoint and key. Music and avatar display do not require an LLM key. See [usage and configuration](docs/usage.md) (Chinese).
 
-## Install the demo avatar (including AI-assisted setup)
+## Default avatar and custom imports (including AI-assisted setup)
 
-The demo uses **Cute Model by Jessair**. It is free, but redistribution is prohibited, so it is not bundled with the source or app. The project's MIT license does not cover the avatar.
+**Sendagaya Shino**, by pixiv / VRoid Project, is bundled under [CC0](https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino). No login or runtime download is required. Existing user-imported avatars retain priority. See the [asset directory](assets/avatars/sendagaya-shino/) for provenance, checksum and license.
 
-1. Visit the [author's BOOTH page](https://booth.pm/ja/items/7100270), sign in, read the terms and download **Cute_Model.vrm**, rather than the `.vroid` project. Personal/commercial use is allowed; redistribution, resale, NFTs and AI training are prohibited. Credit Jessair when using or showing the model.
-2. Quit Komorebi and run from the project directory:
+To import another licensed avatar, quit Komorebi and run from the project directory:
 
-   ```sh
-   npm run setup:avatar -- "$HOME/Downloads/Cute_Model.vrm"
-   npm start
-   ```
+```sh
+npm run setup:avatar -- "/absolute/path/to/model.vrm"
+npm start
+```
 
-You can also import through preferences, or install another licensed `.vrm` with this command. It validates the model and saves it in the app's private directory. Existing avatars require `--replace`; custom directories support `KOMOREBI_DATA_DIR` or `--data-dir`. Run `npm run setup:avatar` for instructions; see [avatar setup](docs/avatar-setup.md) (Chinese).
+Preferences also provides an import button. Existing files require `--replace`. Use `npm run setup:avatar -- --default --replace` to switch back to the bundled avatar. Custom data directories support `KOMOREBI_DATA_DIR` or `--data-dir`; see [avatar setup](docs/avatar-setup.md) (Chinese).
 
-**For installation agents:** proactively explain the separate download and give the author's page. BOOTH requires user sign-in; an unauthenticated download link is not a model file. Run the installer once the local `.vrm` is available. If it is missing, report “application installed, avatar download pending” rather than declaring the companion ready.
+**For installation agents:** launch and verify the bundled avatar on a fresh install; a separate download is unnecessary. Only guide users to external downloads when they request another character. The old demo's Jessair Cute Model is excluded: users wanting it must sign in at the [author's BOOTH page](https://booth.pm/ja/items/7100270), download `Cute_Model.vrm` and follow its separate terms, including no redistribution.
 
 ## First steps
 
-1. Open management from the tray or character context menu, import an avatar and select a project.
+1. Open management from the tray or character context menu, optionally change the avatar and select a project.
 2. Click the character to open a conversation. `Option+Space` imports clipboard content; `Option+Shift+S` captures a selected screen area.
 3. Submit a question and read the result in the bubble. Confirm “save conclusion” to add it to project memory.
 4. Open the NetEase music panel or enable system audio response. `Option+Shift+H` toggles companion visibility.

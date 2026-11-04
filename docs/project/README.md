@@ -22,4 +22,4 @@
 
 ## 代码、素材与独立项目
 
-源码公开目标：[Chengyunlai/komorebi](https://github.com/Chengyunlai/komorebi)。当前看板继续以本地文档为准。公开 main 从干净快照开始，旧历史仅保留在本地备份分支。角色、BVH、运行时密钥留在应用私有目录，不入库；临时视频和构建产物不入库。原music-signal-lab仓库保持独立，地址 https://github.com/Chengyunlai/music-signal-lab ，没有复制成第二份维护分支。默认已vendor其版本，手动升级执行 `node scripts/sync-music-signal.cjs /absolute/path/to/music-signal-lab`。
+源码公开目标：[Chengyunlai/komorebi](https://github.com/Chengyunlai/komorebi)。当前看板继续以本地文档为准。公开 main 从干净快照开始，旧历史仅保留在本地备份分支。CC0 默认角色千驮谷筱随源码分发，来源与校验记录在 `assets/avatars/sendagaya-shino/`；其他用户角色、BVH、运行时密钥留在应用私有目录，不入库；临时视频和构建产物不入库。原music-signal-lab仓库保持独立，地址 https://github.com/Chengyunlai/music-signal-lab ，没有复制成第二份维护分支。默认已vendor其版本，手动升级执行 `node scripts/sync-music-signal.cjs /absolute/path/to/music-signal-lab`。

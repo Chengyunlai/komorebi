@@ -1,4 +1,5 @@
 const fs=require('node:fs');
+const path=require('node:path');
 /** Local GLB only: never let the model loader fetch arbitrary external resources. */
 function inspectVRM(bytes){
  if(bytes.length<20||bytes.length>64*1024*1024||bytes.toString('ascii',0,4)!=='glTF'||bytes.readUInt32LE(4)!==2||bytes.readUInt32LE(8)!==bytes.length)throw Error('请选择有效的 VRM / GLB 文件（最大64MB）');
@@ -11,4 +12,12 @@ function inspectVRM(bytes){
  return {version:json.extensions.VRM?'0.x':'1.0',bones:names,author:extension.meta?.author||extension.meta?.authors?.join(', ')||'',title:extension.meta?.title||extension.meta?.name||'VRM'};
 }
 function readVRM(file){if(!fs.existsSync(file))return null;const size=fs.statSync(file).size;if(size>64*1024*1024)throw Error('模型超过64MB');const bytes=fs.readFileSync(file);return {info:inspectVRM(bytes),bytes:new Uint8Array(bytes)};}
-module.exports={inspectVRM,readVRM};
+const bundledAvatar=path.join(__dirname,'../assets/avatars/sendagaya-shino/Sendagaya_Shino.vrm');
+function readAvatar(dataDir){
+ const local=readVRM(path.join(dataDir,'local-models','Cute_Model.vrm'));
+ if(local)return {...local,source:'imported'};
+ const bundled=readVRM(bundledAvatar);
+ if(!bundled)throw Error('内置角色文件缺失，请重新安装 Komorebi，或在偏好设置中导入 VRM。');
+ return {...bundled,source:'bundled'};
+}
+module.exports={inspectVRM,readVRM,readAvatar,bundledAvatar};

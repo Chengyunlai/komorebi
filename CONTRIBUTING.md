@@ -29,7 +29,7 @@
 
 ## 素材、隐私与许可
 
-禁止提交密钥、用户资料、录音、真实歌曲、角色文件、BVH、模型权重或未经授权的派生动作。使用合成夹具验证。`public/vendor/` 与 `docs/evidence/` 下本机研究产物默认不入库；不要强制添加它们。新增第三方代码需保留完整许可、来源和修订，并更新 THIRD-PARTY-NOTICES。
+禁止提交密钥、用户资料、录音、真实歌曲、其他角色文件、BVH、模型权重或未经授权的派生动作。唯一角色例外是已核验并获用户同意分发的 `assets/avatars/sendagaya-shino/Sendagaya_Shino.vrm`（pixiv，CC0），更新时须同时维护来源、许可与校验和。使用合成夹具验证。`public/vendor/` 与 `docs/evidence/` 下本机研究产物默认不入库；不要强制添加它们。新增第三方代码需保留完整许可、来源和修订，并更新 THIRD-PARTY-NOTICES。
 
 提交贡献即同意将自己的贡献按本仓库 MIT 许可发布，第三方内容仍遵守其原许可。
 

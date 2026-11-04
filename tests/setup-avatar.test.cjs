@@ -36,10 +36,27 @@ test('avatar command installs into the app lookup path, preserves existing avata
 
 test('avatar command gives the official source without claiming installation and reports invalid inputs', () => {
   const help = execFileSync(process.execPath, [script], { encoding: 'utf8' });
-  assert.match(help, /https:\/\/booth.pm\/ja\/items\/7100270/);
+  assert.match(help, /已内置千驮谷筱/);
   assert.match(help, /不会自动下载/);
-  for (const args of [['--data-dir'], ['--replace'], ['--unknown'], ['model.vroid']]) {
+  for (const args of [['--data-dir'], ['--replace'], ['--unknown'], ['model.vroid'], ['--default', 'model.vrm']]) {
     const result = spawnSync(process.execPath, [script, ...args], { encoding: 'utf8' });
     assert.equal(result.status, 1); assert.match(result.stderr, /角色未安装/);
   }
+});
+
+test('bundled default loads on fresh data, imported avatars keep priority, and default install is offline', t => {
+  const {readAvatar,bundledAvatar}=require('../electron/vrm-model.cjs');
+  const crypto=require('node:crypto');
+  const provenance=require('../assets/avatars/sendagaya-shino/provenance.json');
+  const bytes=fs.readFileSync(bundledAvatar);
+  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),provenance.sha256);
+  const json=JSON.parse(bytes.toString('utf8',20,20+bytes.readUInt32LE(12)));
+  assert.equal(json.extensions.VRM.meta.licenseName,'CC0');
+  const folder=fs.mkdtempSync(path.join(os.tmpdir(),'komorebi-default-avatar-'));t.after(()=>fs.rmSync(folder,{recursive:true,force:true}));
+  const fresh=readAvatar(folder);assert.equal(fresh.source,'bundled');assert.ok(fresh.info.bones.length>=12);
+  assert.equal(fs.existsSync(path.join(folder,'local-models')),false);
+  const source=path.join(folder,'custom.vrm');fs.writeFileSync(source,model('user choice'));installAvatar(source,{dataDir:folder});
+  assert.equal(readAvatar(folder).info.title,'user choice');assert.equal(readAvatar(folder).source,'imported');
+  execFileSync(process.execPath,[script,'--default','--replace','--data-dir',folder]);
+  assert.deepEqual(Buffer.from(readAvatar(folder).bytes),bytes);
 });

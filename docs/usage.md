@@ -1,8 +1,8 @@
 # 使用与配置
 
-从 [README](../README.md) 完成源码构建后，以托盘“配置与管理”为入口导入 VRM、选择项目、设置任务后端。没有角色素材时角色区域会提示导入，托盘仍可打开管理窗口。
+从 [README](../README.md) 完成源码构建后，首次启动即显示内置千驮谷筱（pixiv，CC0）；已有导入角色优先使用。以托盘“配置与管理”为入口选择项目、设置任务后端或更换 VRM。
 
-演示角色可从 [Jessair 的 BOOTH 页面](https://booth.pm/ja/items/7100270)免费取得，需登录并下载 `Cute_Model.vrm`；角色禁止再分发，因此未附带。下载后退出应用，运行 `npm run setup:avatar -- "$HOME/Downloads/Cute_Model.vrm"` 并重新启动，或使用偏好设置导入。其他授权 VRM 也可使用。完整步骤及 AI 安装约定见[角色安装](avatar-setup.md)。
+需要其他角色时，可在偏好设置导入，或退出应用后运行 `npm run setup:avatar -- "/absolute/path/to/model.vrm"`。换回内置角色用 `npm run setup:avatar -- --default --replace`。旧演示中的 Jessair Cute Model 禁止再分发，仍须用户自行获取。完整步骤及 AI 安装约定见[角色安装](avatar-setup.md)。
 
 ## 交互
 
@@ -32,6 +32,6 @@
 
 ## 可选研究素材
 
-源码不提供 VRM、BVH、Live2D 模型或 Cubism Core。日常 VRM 使用原创待机后备；若本机已有日和 m05，则沿用其许可单独解释播放。历史 Live2D 研究页需要用户自行取得相关授权资源，放入 `public/vendor/` 后重新构建；缺少素材时这些页不可用，集成测试会明确跳过资产专项用例。
+源码仅附 CC0 默认角色千驮谷筱；不提供其他用户 VRM、BVH、Live2D 模型或 Cubism Core。日常 VRM 使用原创待机后备；若本机已有日和 m05，则沿用其许可单独解释播放。历史 Live2D 研究页需要用户自行取得相关授权资源，放入 `public/vendor/` 后重新构建；缺少素材时这些页不可用，集成测试会明确跳过资产专项用例。
 
 研究顺序与能力边界见 [examples](../examples/README.md) 和 [第三方说明](../THIRD-PARTY-NOTICES.md)。

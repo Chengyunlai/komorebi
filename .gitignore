@@ -9,6 +9,7 @@ release/
 .env.*
 !.env.example
 *.vrm
+!assets/avatars/sendagaya-shino/Sendagaya_Shino.vrm
 *.vroid
 *.bvh
 *.mp4

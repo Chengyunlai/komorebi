@@ -6,7 +6,7 @@ const { spawn, execFile } = require('node:child_process');
 const { promisify } = require('node:util');
 const { randomUUID } = require('node:crypto');
 const {sanitizeDanceStudy}=require('./dance-study.cjs');
-const { readVRM } = require('./vrm-model.cjs');
+const { readVRM, readAvatar } = require('./vrm-model.cjs');
 const { Store } = require('./store.cjs');
 const { TaskRunner } = require('./runner.cjs');
 const { NeteaseMusic } = require('./music.cjs');
@@ -348,7 +348,7 @@ function registerIPC() {
       const resource=readVRM(result.filePaths[0]);if(!resource)throw Error('模型不存在');const folder=path.join(app.getPath('userData'),'local-models');fs.mkdirSync(folder,{recursive:true});fs.writeFileSync(path.join(folder,'Cute_Model.vrm'),resource.bytes);
       pet?.webContents.reload();return resource.info;
     },
-    motionAvatar: () => readVRM(path.join(app.getPath('userData'),'local-models','Cute_Model.vrm')),
+    motionAvatar: () => readAvatar(app.getPath('userData')),
     motionReference: () => {
       const file=path.join(app.getPath('userData'),'research-references','dance-short.bvh');
       if(!fs.existsSync(file))return {text:null};

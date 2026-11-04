@@ -13,7 +13,7 @@ execFileSync('/usr/bin/ditto',[source,target]);
 const resources = path.join(target,'Contents/Resources');
 const appRoot = path.join(resources,'app');
 fs.mkdirSync(appRoot,{recursive:true});
-for(const item of ['electron','dist','native','package.json','scripts','LICENSE','docs/licenses','README.md','THIRD-PARTY-NOTICES.md']) {
+for(const item of ['electron','dist','native','package.json','scripts','assets/avatars/sendagaya-shino','LICENSE','docs/licenses','README.md','THIRD-PARTY-NOTICES.md']) {
   const input = path.join(root,item);
   if(fs.existsSync(input))fs.cpSync(input,path.join(appRoot,item),{recursive:true,verbatimSymlinks:true});
 }

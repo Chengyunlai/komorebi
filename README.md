@@ -6,7 +6,7 @@
 
 一个轻量的桌面伙伴原型：角色安静地待在桌面，点一下就能交办问题；播放音乐时，它会回应声音、跟随律动，并显示当前歌词。
 
-> 当前是面向 macOS Apple Silicon 的源码原型。完整舞蹈、长期稳定性和公开安装包仍在验证；封面为品牌插画，并非应用截图。角色模型需自行导入。
+> 当前是面向 macOS Apple Silicon 的源码原型。完整舞蹈、长期稳定性和公开安装包仍在验证；封面为品牌插画，并非应用截图。已内置 CC0 角色千驮谷筱，也支持导入自己的 VRM。
 
 ## 实机演示 · 40 秒
 
@@ -39,29 +39,28 @@ npm run build
 npm start
 ```
 
-在“配置与管理 → 偏好设置 → 桌面角色”导入有使用许可的 `.vrm`。源码与应用包不附带角色、研究舞蹈、模型权重、音乐或实际歌词。没有原生音乐组件时可跳过两步 `build:*`，先体验任务和角色功能；音乐采集不可用。
+源码和应用包已内置 **千驮谷筱 / Sendagaya Shino（pixiv，CC0）**，首次启动无需另行下载角色。在“配置与管理 → 偏好设置 → 桌面角色”可导入其他有使用许可的 `.vrm`。研究舞蹈、模型权重、音乐或实际歌词不附带。没有原生音乐组件时可跳过两步 `build:*`，先体验任务和角色功能；音乐采集不可用。
 
 默认任务后端需要已安装并登录的独立 Codex CLI；也可在偏好设置中自配火山引擎兼容端点与 Key。音乐和角色显示无需 LLM Key。详见[使用与配置](docs/usage.md)。
 
-## 安装演示角色（也适用于 AI 辅助安装）
+## 默认角色与更换角色（也适用于 AI 辅助安装）
 
-演示使用 **Jessair 的 Cute Model**。角色免费，但作者禁止再分发，所以源码和安装包不附带它；项目的 MIT 许可不包含角色。
+默认使用 **千驮谷筱 / Sendagaya Shino**，由 pixiv / VRoid Project 提供，采用 [CC0](https://vroid.pixiv.help/hc/en-us/articles/360013482714-Sendagaya-Shino)，随源码和应用包提供，启动不需登录或联网下载。已有用户导入的角色仍优先使用。来源、校验和及许可保存在 [角色资源目录](assets/avatars/sendagaya-shino/)。
 
-1. 打开[作者的 BOOTH 下载页](https://booth.pm/ja/items/7100270)，登录、阅读使用条款，下载 **Cute_Model.vrm**（不要选 `.vroid`）。作者允许个人/商业使用，禁止再分发、转卖、NFT 和 AI 训练；使用或展示时请署名 Jessair。
-2. 退出 Komorebi，在本项目目录运行：
+需要更换角色时，退出 Komorebi，在本项目目录运行：
 
-   ```sh
-   npm run setup:avatar -- "$HOME/Downloads/Cute_Model.vrm"
-   npm start
-   ```
+```sh
+npm run setup:avatar -- "/absolute/path/to/model.vrm"
+npm start
+```
 
-也可在“偏好设置 → 桌面角色”导入，或用上述命令安装其他有使用许可的 `.vrm`。命令会校验模型并写入应用私有目录；已有角色时需显式加 `--replace` 才会替换。自定义数据目录支持 `KOMOREBI_DATA_DIR` 或 `--data-dir`，详见[角色安装说明](docs/avatar-setup.md)。单独运行 `npm run setup:avatar` 会显示下载与安装指引。
+也可在“偏好设置 → 桌面角色”导入。已有角色需显式加 `--replace` 才会替换；换回内置角色用 `npm run setup:avatar -- --default --replace`。自定义数据目录支持 `KOMOREBI_DATA_DIR` 或 `--data-dir`，详见[角色安装说明](docs/avatar-setup.md)。
 
-**给安装 AI：** 请主动告知用户角色需要单独下载，并给出上面的作者页面。BOOTH 下载需要用户登录，不能用未登录下载链接代替模型。取得本机 `.vrm` 后再运行安装命令；缺少角色时应明确报告“程序已安装，角色待下载”，不要宣称完整桌宠已就绪。
+**给安装 AI：** 新安装直接启动并验证默认角色可见，不再要求用户另行下载。只有用户指定其他角色时才引导获取授权文件。README 旧演示中的 Jessair Cute Model 不随包提供；若用户需要该角色，请引导至[作者 BOOTH 页面](https://booth.pm/ja/items/7100270)自行登录下载 `Cute_Model.vrm`，遵循其禁止再分发等条款。
 
 ## 第一次使用
 
-1. 右键角色或使用托盘打开“配置与管理”，导入角色并选择工作项目。
+1. 右键角色或使用托盘打开“配置与管理”，按需更换角色并选择工作项目。
 2. 点击角色展开对话；`Option+Space` 带入剪贴板，`Option+Shift+S` 框选截图。
 3. 输入问题并提交，任务完成后在气泡查看结果；“留下结论”经确认后保存为项目记忆。
 4. 在“音乐 · 网易云”中体验音乐陪伴，或开启“系统声音跟拍”。`Option+Shift+H` 显示或隐藏伙伴。

@@ -1,3 +1,7 @@
+# 内置默认角色千驮谷筱（2026-11-04）
+
+用户选定 CC0 的千驮谷筱；现随源码和应用包提供，无导入文件时自动加载，已有用户导入角色优先。新增离线换回默认的 `setup:avatar -- --default --replace`，精确素材分发例外及来源哈希；257测试/构建通过，临时签名测试包在全新用户目录实际显示、待机及点击对话正常。本机已备份旧角色后切换。见[实现记录](implementation/default-avatar.md)。下方早期“所有角色不分发”记录已由本条的单一 CC0 例外更新。
+
 # 角色下载与命令安装（2026-11-04）
 
 演示角色 Jessair Cute Model 免费但禁止再分发；BOOTH 下载需用户登录。README/AGENTS 主动提供作者入口，新增 `npm run setup:avatar -- "/absolute/path/to/model.vrm"`，复用 VRM 校验，写入本机应用目录，默认保留已有角色。256测试与构建通过，真实模型临时目录安装字节一致；未实现登录下载，未替代新设备显示验收。见[安装说明](avatar-setup.md)及[实现记录](implementation/avatar-setup.md)。
